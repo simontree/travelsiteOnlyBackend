@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "./build",
+    "allowJs": true
+  },
+  "ts-node": {
+    "files": true
+  },
+  "exclude": ["node_modules"]
+}
