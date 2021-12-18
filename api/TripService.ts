@@ -1,6 +1,7 @@
 import * as crypto from "crypto";
 // const db = require("../db/db-config"); //import db-config und connection zu knex und pg - old js syntax
 import { Knex } from "knex";
+import moment from "moment"; //date-format library
 
 interface Trip {
   name: string;
@@ -20,7 +21,6 @@ class TripService {
   constructor(knex: Knex) {
     this.knex = knex;
   }
-
   async add(trip: Trip): Promise<SavedTrips> {
     const newTrip: SavedTrips = {
       ...trip,
@@ -38,6 +38,11 @@ class TripService {
   async delete(uuid: string): Promise<void> {
     await this.knex("trip").where({ trip_id: uuid }).delete();
   }
+
+  // TODO need to implement
+  // async udpate(uuid: string): Promise<data> {
+  //   await this.knex("trip").where({ trip_id: uuid }).update(data);
+  // }
 }
 
 export default TripService;

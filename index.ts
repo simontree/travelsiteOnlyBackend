@@ -14,9 +14,20 @@ const port = process.env.PORT || 5000;
 const knex = knexDriver(config);
 const tripService = new TripService(knex);
 
+// // Add Access Control Allow Origin headers
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
+
 app.use(
   cors({
-    origin: "*", //allow requests from any origin for now
+    origin: true,
+    credentials: true,
   })
 );
 
@@ -27,7 +38,7 @@ app.use(express.json());
 app.use(
   OpenApiValidator.middleware({
     apiSpec: "./openapi.yaml",
-    validateRequests: false, // (default)
+    validateRequests: true, // (default)
     validateResponses: false, // false by default
   })
 );
@@ -42,7 +53,7 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 app.post("/trips", (req, res) => {
   const payload = req.body;
-  tripService.add(payload).then((savedTrip) => res.json(savedTrip));
+  tripService.add(payload).then((newEntry) => res.json(newEntry));
 });
 
 app.get("/trips", (req, res) => {
