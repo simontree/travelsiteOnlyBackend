@@ -14,16 +14,6 @@ const port = process.env.PORT || 5000;
 const knex = knexDriver(config);
 const tripService = new TripService(knex);
 
-// // Add Access Control Allow Origin headers
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
-
 app.use(
   cors({
     origin: true,
@@ -64,6 +54,16 @@ app.delete("/trips/:tripId", (req, res) => {
   const tripId = req.params.tripId;
   tripService.delete(tripId).then(() => {
     res.status(204);
+    res.send();
+  });
+});
+
+app.put("/trips/:tripId", (req, res) => {
+  const tripId = req.params.tripId;
+  const changes = req.body;
+
+  tripService.update(tripId, changes).then(() => {
+    res.status(200);
     res.send();
   });
 });
