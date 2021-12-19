@@ -115,6 +115,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Login"
+
   /trips/{userIDtrips}:
     post:
       tags:
@@ -147,70 +148,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/SavedTrip"
-    /trips/{userIDtrips}/{tripId}:
-    delete:
-      tags:
-        - trips
-      summary: Delete a trip by tripID from specific user
-      parameters:
-        - name: userIDtrips
-          in: path
-          description: triptable of specific user to delete
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: tripId
-          in: path
-          description: ID of trip to delete
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "204":
-          description: successful operation
-        "400":
-          description: Bad request
-          content: {}
-        "404":
-          description: Trip not found
-          content: {}
-    put:
-      tags:
-        - trips
-      summary: update a trip by ID
-      parameters:
-        - name: userIDtrips
-          in: path
-          description: triptable of specific user to update
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: tripId
-          in: path
-          description: ID of trip to update
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        description: Trip object that needs to be updated
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Trip"
-        required: true
-      responses:
-        "204":
-          description: successful operation
-        "400":
-          description: Bad request
-          content: {}
-        "404":
-          description: Trip not found
-          content: {}
+
 components:
   schemas:
     Trip:
