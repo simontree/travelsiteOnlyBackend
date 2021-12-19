@@ -8,22 +8,11 @@ import { knex as knexDriver } from "knex";
 import cors from "cors";
 import config from "./knexfile";
 
-import { createClient } from "redis";
-
 const app = express();
 const port = process.env.PORT || 5000;
 
 const knex = knexDriver(config);
 const tripService = new TripService(knex);
-
-const client = createClient();
-
-client.on("error", (err) => console.log("Redis client error", err));
-client.on("connect", () => console.log("Successfully connected to redis"));
-
-(async () => {
-  await client.connect();
-})();
 
 app.use(
   cors({
@@ -53,19 +42,15 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.post("/trips", (req, res) => {
-  client.set("a","4");
   const payload = req.body;
   tripService.add(payload).then((newEntry) => res.json(newEntry));
-
 });
 
 app.get("/trips", (req, res) => {
-  console.log(client.get("a"));
   tripService.getAll().then((savedTrips) => res.json(savedTrips));
 });
 
 app.delete("/trips/:tripId", (req, res) => {
-  client.del("a");
   const tripId = req.params.tripId;
   tripService.delete(tripId).then(() => {
     res.status(204);
