@@ -87,6 +87,13 @@ paths:
           schema:
             type: string
             format: uuid
+      requestBody:
+        description: Trip object that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trip"
+        required: true
       responses:
         "204":
           description: successful operation

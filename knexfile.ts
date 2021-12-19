@@ -3,6 +3,10 @@ dotenv.config();
 
 import { Knex } from "knex";
 
+import pg from "pg";
+import * as moment from "moment"; //date-format library
+pg.types.setTypeParser(1082, (str) => moment.utc(str).format("YYYY-MM-DD"));
+
 const devConfig: Knex.Config = {
   client: "pg",
   connection: {
