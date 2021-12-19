@@ -111,9 +111,10 @@ app.post("/login", async (req, res) => {
   res.json({ status: "200 OK" });
 });
 
-app///////////////////////////////////////////// END USERS //////////////////////////
+app;
 
-.app
-  .listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-  });
+///////////////////////////////////////////// END USERS //////////////////////////
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
