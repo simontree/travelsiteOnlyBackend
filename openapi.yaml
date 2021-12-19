@@ -75,6 +75,34 @@ paths:
         "404":
           description: Trip not found
           content: {}
+    put:
+      tags:
+        - trips
+      summary: update a trip by ID
+      parameters:
+        - name: tripId
+          in: path
+          description: ID of trip to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Trip object that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trip"
+        required: true
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          description: Bad request
+          content: {}
+        "404":
+          description: Trip not found
+          content: {}
 
   /login:
     post:
@@ -101,10 +129,10 @@ components:
           type: string
         start:
           type: string
-          format: date-time
+          format: date
         end:
           type: string
-          format: date-time
+          format: date
         country:
           type: string
     SavedTrip:

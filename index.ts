@@ -16,7 +16,8 @@ const tripService = new TripService(knex);
 
 app.use(
   cors({
-    origin: "*", //allow requests from any origin for now
+    origin: true,
+    credentials: true,
   })
 );
 
@@ -27,7 +28,7 @@ app.use(express.json());
 app.use(
   OpenApiValidator.middleware({
     apiSpec: "./openapi.yaml",
-    validateRequests: false, // (default)
+    validateRequests: true, // (default)
     validateResponses: false, // false by default
   })
 );
@@ -42,7 +43,7 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 app.post("/trips", (req, res) => {
   const payload = req.body;
-  tripService.add(payload).then((savedTrip) => res.json(savedTrip));
+  tripService.add(payload).then((newEntry) => res.json(newEntry));
 });
 
 app.get("/trips", (req, res) => {
@@ -53,6 +54,16 @@ app.delete("/trips/:tripId", (req, res) => {
   const tripId = req.params.tripId;
   tripService.delete(tripId).then(() => {
     res.status(204);
+    res.send();
+  });
+});
+
+app.put("/trips/:tripId", (req, res) => {
+  const tripId = req.params.tripId;
+  const changes = req.body;
+
+  tripService.update(tripId, changes).then(() => {
+    res.status(200);
     res.send();
   });
 });

@@ -20,7 +20,6 @@ class TripService {
   constructor(knex: Knex) {
     this.knex = knex;
   }
-
   async add(trip: Trip): Promise<SavedTrips> {
     const newTrip: SavedTrips = {
       ...trip,
@@ -37,6 +36,10 @@ class TripService {
 
   async delete(uuid: string): Promise<void> {
     await this.knex("trip").where({ trip_id: uuid }).delete();
+  }
+
+  async update(uuid: string, changes: string): Promise<void> {
+    await this.knex("trip").where({ trip_id: uuid }).update(changes);
   }
 }
 
