@@ -2,7 +2,7 @@ import { Knex } from "knex";
 
 const trip = [
   {
-    id: "4f2b7664-5ea9-11ec-bf63-0242ac130002",
+    trip_id: "4f2b7664-5ea9-11ec-bf63-0242ac130002",
     tripname: "Urlaub auf Hawaii",
     start: "2022-10-10",
     end: "2022-10-21",
