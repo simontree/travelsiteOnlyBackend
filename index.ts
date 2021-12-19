@@ -16,6 +16,7 @@ const port = process.env.PORT || 5000;
 
 const knex = knexDriver(config);
 const tripService = new TripService(knex);
+
 const authService = new AuthService();
 
 const client = createClient();
@@ -54,18 +55,13 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
+///////////////////////////////////////////// TRIPS //////////////////////////////
+
 app.post("/trips", (req, res) => {
   //client.set("a","4");
   const payload = req.body;
   tripService.add(payload).then((newEntry) => res.json(newEntry));
-
 });
-
-app.post("/user", (req, res) =>{
-  const payload = req.body;
-  authService.create(payload).then((newEntry) => res.json(newEntry));
-
-})
 
 app.get("/trips", (req, res) => {
   //console.log(client.get("a"));
@@ -93,11 +89,12 @@ app.put("/trips/:tripId", (req, res) => {
 
 ///////////////////////////////////////////// USERS //////////////////////////////
 
-
-
+app.post("/user", (req, res) => {
+  const payload = req.body;
+  authService.create(payload).then((newEntry) => res.json(newEntry));
+});
 
 ///////////////////////////////////////////// END USERS //////////////////////////
-
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
