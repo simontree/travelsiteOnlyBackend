@@ -111,7 +111,36 @@ app.post("/login", async (req, res) => {
   res.json({ status: "200 OK" });
 });
 
-app;
+app.post("/trips/:userIDtrips", (req, res) => {
+  // const userIDtrips = req.params.userIDtrips;
+  const payload = req.body;
+  tripService.add(payload).then((newEntry) => res.json(newEntry));
+});
+
+app.get("/trips/:userIDtrips", (req, res) => {
+  // const userIDtrips = req.params.userIDtrips;
+  tripService.getAll().then((savedTrips) => res.json(savedTrips));
+});
+
+app.delete("/trips/:userIDtrips/:tripId", (req, res) => {
+  // const userIDtrips = req.params.userIDtrips;
+  const tripId = req.params.tripId;
+  tripService.delete(tripId).then(() => {
+    res.status(204);
+    res.send();
+  });
+});
+
+app.put("/trips/:userIDtrips/:tripId", (req, res) => {
+  // const userIDtrips = req.params.userIDtrips;
+  const tripId = req.params.tripId;
+  const changes = req.body;
+
+  tripService.update(tripId, changes).then(() => {
+    res.status(200);
+    res.send();
+  });
+});
 
 ///////////////////////////////////////////// END USERS //////////////////////////
 
