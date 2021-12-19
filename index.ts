@@ -61,11 +61,7 @@ app.post("/trips", (req, res) => {
 
 });
 
-app.post("/user", (req, res) =>{
-  const payload = req.body;
-  authService.create(payload).then((newEntry) => res.json(newEntry));
 
-})
 
 app.get("/trips", (req, res) => {
   //console.log(client.get("a"));
@@ -93,8 +89,27 @@ app.put("/trips/:tripId", (req, res) => {
 
 ///////////////////////////////////////////// USERS //////////////////////////////
 
+app.post("/user", (req, res) =>{
+  const payload = req.body;
+  authService.create(payload).then((newEntry) => res.json(newEntry));
 
+})
 
+app.post("/login", async (req, res) => {
+  const payload = req.body;
+  const sessionId = await authService.login(payload.email, payload.password);
+  if (!sessionId) {
+    res.status(401);
+    return res.json({ message: "Bad email or password" });
+  }
+  /*res.cookie("session", sessionId, {
+    maxAge: 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "none",
+    secure: process.env.NODE_ENV === "production",
+  });*/
+  res.json({ status: "200 OK" });
+}); 
 
 ///////////////////////////////////////////// END USERS //////////////////////////
 
