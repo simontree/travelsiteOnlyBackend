@@ -23,18 +23,18 @@ class AuthService {
   async create(newUser: User): Promise<void> {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(newUser.password, salt);
-    await knex("users").insert({
+    await knex("user").insert({
       ...newUser,
       password: passwordHash,
     });
   }
 
   async delete(email: string): Promise<void> {
-    await knex("users").where({email}).delete()
+    await knex("user").where({ email }).delete();
   }
 
   async checkPassword(email: string, password: string): Promise<boolean> {
-    const dbUser = await knex<User>("users").where({ email }).first();
+    const dbUser = await knex<User>("user").where({ email }).first();
     if (!dbUser) {
       return false;
     }
