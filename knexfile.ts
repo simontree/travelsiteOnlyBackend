@@ -33,10 +33,10 @@ const prodConfig: Knex.Config = {
         : false, // if we run locally, we don't want SSL at all
   },
   migrations: {
-    directory: "build/db/migrations",
+    directory: "./db/migrations",
   },
   seeds: {
-    directory: "build/db/seeds",
+    directory: "./db/seeds",
   },
 };
 
