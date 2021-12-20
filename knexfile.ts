@@ -40,4 +40,4 @@ const prodConfig: Knex.Config = {
   },
 };
 
-export default devConfig;
+export default prodConfig;
