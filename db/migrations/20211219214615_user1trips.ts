@@ -1,9 +1,7 @@
 import { Knex } from "knex";
 
-///////////// ONLY FOR TESTING PURPOSE /////////////////////
-
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTable("trip", function (table) {
+  return knex.schema.createTable("user1trips", function (table) {
     table.uuid("trip_id").primary();
     table.string("name", 128).notNullable();
     table.date("start").notNullable();
@@ -13,5 +11,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists("trip");
+  return knex.schema.dropTableIfExists("user1trips");
 }
