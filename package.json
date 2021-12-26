@@ -28,7 +28,7 @@
     "nodemon": "^2.0.15",
     "pg": "^8.7.1",
     "redis": "^4.0.1",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^4.2.0"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",

@@ -17,7 +17,7 @@ const port = process.env.PORT || 5000;
 const knex = knexDriver(config);
 const tripService = new TripService(knex);
 
-const authService = new AuthService();
+const authService = new AuthService(knex);
 
 const client = createClient();
 
@@ -96,8 +96,8 @@ app.post("/user", (req, res) => {
 
 app.post("/login", async (req, res) => {
   const payload = req.body;
+  console.log(payload);
   const sessionId = await authService.login(payload.email, payload.password);
-  //console.log(sessionId);
   if (!sessionId) {
     res.status(401);
     return res.json({ message: "Bad email or password" });
@@ -108,7 +108,8 @@ app.post("/login", async (req, res) => {
     sameSite: "none",
     secure: process.env.NODE_ENV === "production",
   });*/
-  res.json({ status: "200 OK" });
+  res.status(200);
+  return res.json({ status: "200", sessionID: sessionId });
 });
 
 app.post("/trips/:userIDtrips", (req, res) => {
@@ -143,6 +144,18 @@ app.put("/trips/:userIDtrips/:tripId", (req, res) => {
 });
 
 ///////////////////////////////////////////// END USERS //////////////////////////
+
+////////////////////////////////////////// FOR DEBUG /////////////////////////////
+
+app.get("/get", (req, res ) =>{
+  /*return res.json({
+    chicken: "hi"
+  })*/
+  authService.getUsers().then((dbUsers) => res.json(dbUsers));
+});
+
+
+//////////////////////////////////////////// END DEBUG ///////////////////////////
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

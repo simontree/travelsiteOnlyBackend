@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
-import Knex from "knex";
+import bcrypt, { compare } from "bcrypt";
+import {Knex} from "knex";
 
 import { createClient } from "redis";
 import crypto from "crypto";
@@ -12,33 +12,40 @@ client.on("connect", () => console.log("Successfully connected to redis"));
   await client.connect();
 })();
 
-const knex = Knex;
-
 interface User {
   email: string;
   password: string;
 }
 
 class AuthService {
+
+  private knex: Knex;
+
+  constructor(knex: Knex) {
+    this.knex = knex;
+  }
+
   async create(newUser: User): Promise<void> {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(newUser.password, salt);
-    await knex("user").insert({
+    await this.knex("user").insert({
       ...newUser,
       password: passwordHash,
     });
   }
 
   async delete(email: string): Promise<void> {
-    await knex("user").where({ email }).delete();
+    await this.knex("user").where({ email }).delete();
   }
 
   async checkPassword(email: string, password: string): Promise<boolean> {
-    const dbUser = await knex<User>("user").where({ email }).first();
+    const dbUser = await this.knex('email').from('user').where({ email: email }).first();
     if (!dbUser) {
       return false;
     }
-    return bcrypt.compare(password, dbUser.password);
+    //console.log(password + " " + dbUser.password);
+    //return bcrypt.compare(password, dbUser.password);
+    return dbUser.password === password;
   }
 
   public async login(
@@ -58,6 +65,11 @@ class AuthService {
     sessionId: string
   ): Promise<string | null> {
     return client.get(sessionId);
+  }
+
+  async getUsers(): Promise<User[]>{
+    const users = await this.knex("user");
+    return users;
   }
 }
 
