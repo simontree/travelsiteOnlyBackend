@@ -38,7 +38,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SavedTrip"
-
     get:
       tags:
         - trips
@@ -116,6 +115,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Login"
+
+  /trips/{userIDtrips}:
+    post:
+      tags:
+        - trips
+      summary: Add a new trip to user with userID
+      requestBody:
+        description: Trip object that needs to be added
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trip"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedTrip"
+    get:
+      tags:
+        - trips
+      summary: Get all trips from specific user
+      responses:
+        "200":
+          description: Successfull request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SavedTrip"
 
 components:
   schemas:

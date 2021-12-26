@@ -2,8 +2,8 @@ import { Knex } from "knex";
 
 const user = [
   {
-    email: "123@yohoo.com",
-    password: "huhu123",
+    email: "huehne@htw-berlin.de",
+    password: "hunter2",
   },
   {
     email: "superuser@yohoo.de",

@@ -1,28 +1,26 @@
 import { Knex } from "knex";
 
-///////////// ONLY FOR TESTING PURPOSE /////////////////////
-
-const trip = [
+const user1trips = [
   {
     trip_id: "4f2b7664-5ea9-11ec-bf63-0242ac130002",
-    name: "Urlaub auf Hawaii",
+    name: "Urlaub auf Haiti",
     start: "2022-10-10",
     end: "2022-10-21",
-    country: "Hawaii",
+    country: "Haiti",
   },
   {
     trip_id: "68ba8278-5ea9-11ec-bf63-0242ac130002",
-    name: "Partywochenende auf Ibiza",
+    name: "Partywoche in Indien",
     start: "2022-11-12",
     end: "2022-11-26",
-    country: "Ibiza",
+    country: "India",
   },
 ];
 
 export async function seed(knex: Knex): Promise<void> {
-  return knex("trip")
+  return knex("user1trips")
     .del()
-    .then(function () {
-      return knex("trip").insert(trip);
+    .then(() => {
+      return knex("user1trips").insert(user1trips);
     });
 }
