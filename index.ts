@@ -6,6 +6,7 @@ import { HttpError } from "express-openapi-validator/dist/framework/types";
 
 import { knex as knexDriver } from "knex";
 import cors from "cors";
+
 import config from "./knexfile";
 
 const app = express();
