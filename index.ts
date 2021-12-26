@@ -59,7 +59,7 @@ app.delete("/trips/:tripId", (req, res) => {
   });
 });
 
-app.put("/trips/:tripId", (req, res) => {
+app.patch("/trips/:tripId", (req, res) => {
   const tripId = req.params.tripId;
   const changes = req.body;
 

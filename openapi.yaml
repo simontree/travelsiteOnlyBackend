@@ -75,7 +75,7 @@ paths:
         "404":
           description: Trip not found
           content: {}
-    put:
+    patch:
       tags:
         - trips
       summary: update a trip by ID
