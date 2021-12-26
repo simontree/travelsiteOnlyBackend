@@ -116,7 +116,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Login"
 
-  /trips/{userIDtrips}:
+  /trips/{userID}:
     post:
       tags:
         - trips
