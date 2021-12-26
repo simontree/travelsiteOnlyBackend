@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
     table.date("start").notNullable();
     table.date("end").notNullable();
     table.string("country", 128).notNullable();
+    table.string("user_id").notNullable();
   });
 }
 
