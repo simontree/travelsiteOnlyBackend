@@ -183,6 +183,16 @@ paths:
       tags:
         - trips
       summary: Get all trips from specific user
+      parameters:
+        - name: userID
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: string
+            format: email
+            items:
+              $ref: "#/components/schemas/Login"
       responses:
         "200":
           description: Successfull request

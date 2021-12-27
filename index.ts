@@ -54,7 +54,8 @@ const checkLogin = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const session = req.cookies.session;
+  const session = sessionGlobal;
+  // const session = req.cookies.session;
   console.log("session cookie: " + session);
   if (!session) {
     res.status(401);
@@ -86,7 +87,12 @@ app.post("/trips", (req, res) => {
 });
 
 app.get("/trips", checkLogin, (req, res) => {
-  tripService.getAll().then((savedTrips) => res.json(savedTrips));
+  const userID = client.get(JSON.stringify(sessionGlobal));
+  console.log("userID: " + userID);
+  // const email = req.userEmail;
+  tripService
+    .getTripsOfOneUser(JSON.stringify(userID))
+    .then((savedTrips) => res.json(savedTrips));
 });
 
 app.delete("/trips/:tripId", (req, res) => {
@@ -127,21 +133,24 @@ app.delete("/user/:email", (req, res) => {
   });
 });
 
+let sessionGlobal: string | undefined;
+
 app.post("/login", async (req, res) => {
   const payload = req.body;
   console.log(payload);
   const sessionId = await authService.login(payload.email, payload.password);
-  console.log("sessionID" + sessionId);
+  sessionGlobal = sessionId;
+  console.log("sessionID: " + sessionId);
   if (!sessionId) {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
-  res.cookie("session", sessionId, {
-    maxAge: 60 * 60 * 1000,
-    httpOnly: true,
-    sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
-  });
+  // res.cookie("session", sessionId, {
+  //   maxAge: 60 * 60 * 1000,
+  //   httpOnly: true,
+  //   sameSite: "none",
+  //   secure: process.env.NODE_ENV === "development",
+  // });
   res.status(200);
   return res.json({ status: "200", sessionID: sessionId });
 });

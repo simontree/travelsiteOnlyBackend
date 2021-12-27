@@ -34,6 +34,10 @@ class TripService {
     return this.knex("trip");
   }
 
+  async getTripsOfOneUser(email: string): Promise<SavedTrips[]> {
+    return this.knex("trip").where({ user_id: email });
+  }
+
   async delete(uuid: string): Promise<void> {
     await this.knex("trip").where({ trip_id: uuid }).delete();
   }
