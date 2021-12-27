@@ -59,17 +59,21 @@ const checkLogin = async (
   // const session = req.cookies.session;
   if (!session) {
     res.status(401);
-    return res.json({ message: "You need to be logged in to see this page. Err1" });
+    return res.json({
+      message: "You need to be logged in to see this page. Err1",
+    });
   }
-  let email:string|null;
-  if(session!=null){
-     email = await client.get(session.toString());
-     console.log(email);
+  let email: string | null;
+  if (session != null) {
+    email = await client.get(session.toString());
+    console.log(email);
   } else email = null;
-  
+
   if (!email) {
     res.status(401);
-    return res.json({ message: "You need to be logged in to see this page. Err2" });
+    return res.json({
+      message: "You need to be logged in to see this page. Err2",
+    });
   }
   req.userEmail = email;
 
@@ -90,18 +94,22 @@ app.post("/trips", (req, res) => {
   const payload = req.body;
   tripService.add(payload).then((newEntry) => res.json(newEntry));
 });
-async function getUserID(){
+
+async function getUserID() {
   const session = await client.get("cookie");
-  const userID = await client.get(session);
-  console.log("userID: " + userID);
+  return client.get(session!);
+  // console.log("userID: " + userID);
 }
 
 app.get("/trips", checkLogin, (req, res) => {
-  
   // const email = req.userEmail;
-  tripService
-    .getTripsOfOneUser(userID.toString())
-    .then((savedTrips) => res.json(savedTrips));
+
+  async function getUserTrips() {
+    tripService
+      .getTripsOfOneUser(getUserID().toString())
+      .then((savedTrips) => res.json(savedTrips));
+  }
+  getUserTrips();
 });
 
 app.delete("/trips/:tripId", (req, res) => {
@@ -158,41 +166,22 @@ app.post("/login", async (req, res) => {
   //   secure: process.env.NODE_ENV === "development",
   // });
   res.status(200);
-  //Add expiration to cookie
+  //TODO Add expiration to cookie
   client.set("cookie", sessionId);
   return res.json({ status: "200", sessionID: sessionId });
 });
 
-app.post("/trips/:userID", (req, res) => {
-  // const userID = req.params.userID;
-  const payload = req.body;
-  tripService.add(payload).then((newEntry) => res.json(newEntry));
-});
+//wahrscheinlich überflüssig durch app.delete("/trips/:tripId"...) und app.patch("/trips/:tripId"...)
+// app.post("/trips/:userID", (req, res) => {
+//   // const userID = req.params.userID;
+//   const payload = req.body;
+//   tripService.add(payload).then((newEntry) => res.json(newEntry));
+// });
 
-app.get("/trips/:userID", (req, res) => {
-  // const userID = req.params.userID;
-  tripService.getAll().then((savedTrips) => res.json(savedTrips));
-});
-
-app.delete("/trips/:userID/:tripId", (req, res) => {
-  // const userID = req.params.userID;
-  const tripId = req.params.tripId;
-  tripService.delete(tripId).then(() => {
-    res.status(204);
-    res.send();
-  });
-});
-
-app.put("/trips/:userID/:tripId", (req, res) => {
-  // const userID = req.params.userID;
-  const tripId = req.params.tripId;
-  const changes = req.body;
-
-  tripService.update(tripId, changes).then(() => {
-    res.status(200);
-    res.send();
-  });
-});
+// app.get("/trips/:userID", (req, res) => {
+//   // const userID = req.params.userID;
+//   tripService.getAll().then((savedTrips) => res.json(savedTrips));
+// });
 
 ///////////////////////////////////////////// END USERS //////////////////////////
 
@@ -208,5 +197,5 @@ app.get("/get", (req, res) => {
 //////////////////////////////////////////// END DEBUG ///////////////////////////
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Test app listening at http://localhost:${port}`);
 });
