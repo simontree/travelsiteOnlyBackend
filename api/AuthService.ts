@@ -64,6 +64,12 @@ class AuthService {
     return undefined;
   }
 
+  async getUserOfTrip(uuid: string): Promise<string> {
+    return (
+      await knex("trip").where({ trip_id: uuid }).select("user_id")
+    ).toString();
+  }
+
   public async getUserEmailForSession(
     sessionId: string
   ): Promise<string | null> {

@@ -55,7 +55,7 @@ const checkLogin = async (
   next: express.NextFunction
 ) => {
   const session = await client.get("cookie");
-  /*then(() => console.log("session cookie: " + session.toString()));*/
+
   // const session = req.cookies.session;
   if (!session) {
     res.status(401);
@@ -63,19 +63,30 @@ const checkLogin = async (
       message: "You need to be logged in to see this page. Err1",
     });
   }
+
   let email: string | null;
   if (session != null) {
     email = await client.get(session.toString());
   } else email = null;
 
+  if (req.params.tripId) {
+    var mailToCheck = await authService.getUserOfTrip(req.params.tripId);
+    if (mailToCheck !== email) {
+      return res.json({
+        message: "You need to be logged in to see this page. Err2",
+      });
+    }
+  }
+
   if (!email) {
     res.status(401);
     return res.json({
-      message: "You need to be logged in to see this page. Err2",
+      message: "You need to be logged in to see this page. Err3",
     });
   }
-  req.userEmail = email;
 
+  console.log("check session: " + session);
+  console.log("check email: " + email);
   next();
 };
 
@@ -116,6 +127,7 @@ app.get("/trips", checkLogin, (req, res) => {
 
 app.delete("/trips/:tripId", checkLogin, (req, res) => {
   const tripId = req.params.tripId;
+
   tripService.delete(tripId).then(() => {
     res.status(204);
     res.send();
@@ -171,7 +183,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/logout", async (req, res) => {
-  client.set("cookie", "0");
+  client.flushAll();
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });
