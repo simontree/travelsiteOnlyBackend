@@ -39,7 +39,7 @@ class AuthService {
     if (!dbUser) {
       return false;
     }
-    console.log("check pw: " + password + " " + dbUser.password);
+    console.log("check pw: " + password + ", " + dbUser.password);
     return bcrypt.compare(password, dbUser.password);
     // return dbUser.password === password;
   }
@@ -52,7 +52,10 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      await client.set(sessionId, email, { EX: 6000 });
+      await client.set(sessionId, email, { EX: 600000000 }).
+      then(() => console.log("Redis Cookie Set For: " + client.get(sessionId)));
+      //console.log("Cookie Set For: " + email);
+      
       return sessionId;
     }
     return undefined;

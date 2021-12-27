@@ -54,17 +54,22 @@ const checkLogin = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const session = sessionGlobal;
+  const session = await client.get("cookie");
+  /*then(() => console.log("session cookie: " + session.toString()));*/
   // const session = req.cookies.session;
-  console.log("session cookie: " + session);
   if (!session) {
     res.status(401);
-    return res.json({ message: "You need to be logged in to see this page." });
+    return res.json({ message: "You need to be logged in to see this page. Err1" });
   }
-  const email = await authService.getUserEmailForSession(session);
+  let email:string|null;
+  if(session!=null){
+     email = await client.get(session.toString());
+     console.log(email);
+  } else email = null;
+  
   if (!email) {
     res.status(401);
-    return res.json({ message: "You need to be logged in to see this page." });
+    return res.json({ message: "You need to be logged in to see this page. Err2" });
   }
   req.userEmail = email;
 
@@ -85,13 +90,17 @@ app.post("/trips", (req, res) => {
   const payload = req.body;
   tripService.add(payload).then((newEntry) => res.json(newEntry));
 });
+async function getUserID(){
+  const session = await client.get("cookie");
+  const userID = await client.get(session);
+  console.log("userID: " + userID);
+}
 
 app.get("/trips", checkLogin, (req, res) => {
-  const userID = client.get(JSON.stringify(sessionGlobal));
-  console.log("userID: " + userID);
+  
   // const email = req.userEmail;
   tripService
-    .getTripsOfOneUser(JSON.stringify(userID))
+    .getTripsOfOneUser(userID.toString())
     .then((savedTrips) => res.json(savedTrips));
 });
 
@@ -133,13 +142,10 @@ app.delete("/user/:email", (req, res) => {
   });
 });
 
-let sessionGlobal: string | undefined;
-
 app.post("/login", async (req, res) => {
   const payload = req.body;
-  console.log(payload);
+  //console.log(payload);
   const sessionId = await authService.login(payload.email, payload.password);
-  sessionGlobal = sessionId;
   console.log("sessionID: " + sessionId);
   if (!sessionId) {
     res.status(401);
@@ -152,6 +158,8 @@ app.post("/login", async (req, res) => {
   //   secure: process.env.NODE_ENV === "development",
   // });
   res.status(200);
+  //Add expiration to cookie
+  client.set("cookie", sessionId);
   return res.json({ status: "200", sessionID: sessionId });
 });
 
