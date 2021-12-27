@@ -114,7 +114,7 @@ app.get("/trips", checkLogin, (req, res) => {
   });
 });
 
-app.delete("/trips/:tripId", (req, res) => {
+app.delete("/trips/:tripId", checkLogin, (req, res) => {
   const tripId = req.params.tripId;
   tripService.delete(tripId).then(() => {
     res.status(204);
@@ -122,7 +122,7 @@ app.delete("/trips/:tripId", (req, res) => {
   });
 });
 
-app.patch("/trips/:tripId", (req, res) => {
+app.patch("/trips/:tripId", checkLogin, (req, res) => {
   const tripId = req.params.tripId;
   const changes = req.body;
 
@@ -177,28 +177,16 @@ app.post("/logout", async (req, res) => {
   return res.json({ message: "Logout successful" });
 });
 
-//wahrscheinlich überflüssig durch app.delete("/trips/:tripId"...) und app.patch("/trips/:tripId"...)
-// app.post("/trips/:userID", (req, res) => {
-//   // const userID = req.params.userID;
-//   const payload = req.body;
-//   tripService.add(payload).then((newEntry) => res.json(newEntry));
-// });
-
-// app.get("/trips/:userID", (req, res) => {
-//   // const userID = req.params.userID;
-//   tripService.getAll().then((savedTrips) => res.json(savedTrips));
-// });
-
 ///////////////////////////////////////////// END USERS //////////////////////////
 
 ////////////////////////////////////////// FOR DEBUG /////////////////////////////
 
-app.get("/get", (req, res) => {
-  /*return res.json({
-    chicken: "hi"
-  })*/
-  authService.getUsers().then((dbUsers) => res.json(dbUsers));
-});
+// app.get("/get", (req, res) => {
+//   /*return res.json({
+//     chicken: "hi"
+//   })*/
+//   authService.getUsers().then((dbUsers) => res.json(dbUsers));
+// });
 
 //////////////////////////////////////////// END DEBUG ///////////////////////////
 
