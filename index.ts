@@ -69,7 +69,7 @@ const checkLogin = async (
     email = await client.get(session.toString());
   } else email = null;
 
-  if (req.params.tripId) {
+  if (req.params.tripID) {
     var mailToCheck = await authService.getUserOfTrip(req.params.tripId);
     if (mailToCheck !== email) {
       return res.json({
@@ -183,7 +183,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/logout", async (req, res) => {
-  client.flushAll();
+  client.set("cookie", "0");
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });
