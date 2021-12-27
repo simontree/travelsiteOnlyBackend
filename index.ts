@@ -175,6 +175,13 @@ app.post("/login", async (req, res) => {
   return res.json({ status: "200", sessionID: sessionId });
 });
 
+app.post("/logout", async (req,res) =>{
+  client.set("cookie", "0");
+  console.log("logout");
+  res.status(200);
+  return res.json({ message: "Logout successful" });
+})
+
 //wahrscheinlich überflüssig durch app.delete("/trips/:tripId"...) und app.patch("/trips/:tripId"...)
 // app.post("/trips/:userID", (req, res) => {
 //   // const userID = req.params.userID;
