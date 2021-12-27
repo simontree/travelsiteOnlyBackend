@@ -4,7 +4,6 @@ import Knex from "knex";
 
 import { createClient } from "redis";
 import crypto from "crypto";
-import { promisify } from "util";
 
 const client = createClient();
 client.on("error", (err) => console.log("Redis Client Error", err));
@@ -40,7 +39,7 @@ class AuthService {
     if (!dbUser) {
       return false;
     }
-    console.log("check pw: " + password + ", " + dbUser.password);
+    // console.log("check pw: " + password + ", " + dbUser.password);
     return bcrypt.compare(password, dbUser.password);
   }
 
@@ -53,11 +52,10 @@ class AuthService {
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
       await client
-        .set(sessionId, email, { EX: 600000000 })
+        .set(sessionId, email, { EX: 600 })
         .then(async () =>
           console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
         );
-      //console.log("Cookie Set For: " + email);
       return sessionId;
     }
     return undefined;

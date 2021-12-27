@@ -1,5 +1,4 @@
 import * as crypto from "crypto";
-// const db = require("../db/db-config"); //import db-config und connection zu knex und pg - old js syntax
 import { Knex } from "knex";
 
 interface Trip {
@@ -37,7 +36,6 @@ class TripService {
   }
 
   async getTripsOfOneUser(email: string): Promise<SavedTrips[]> {
-    // console.log(email);
     return this.knex("trip").where({ user_id: email });
   }
 
