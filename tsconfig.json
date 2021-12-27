@@ -1,9 +1,10 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "strict": true,
+    //"strict": true,
     "outDir": "./build",
-    "allowJs": true
+    "allowJs": true,
+    "noImplicitAny": false
   },
   "ts-node": {
     "files": true

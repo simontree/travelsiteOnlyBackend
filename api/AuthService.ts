@@ -4,6 +4,7 @@ import Knex from "knex";
 
 import { createClient } from "redis";
 import crypto from "crypto";
+import { promisify } from "util";
 
 const client = createClient();
 client.on("error", (err) => console.log("Redis Client Error", err));
@@ -53,7 +54,7 @@ class AuthService {
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
       await client.set(sessionId, email, { EX: 600000000 }).
-      then(() => console.log("Redis Cookie Set For: " + client.get(sessionId)));
+      then(async() => console.log("Redis Cookie Set For: " + await client.get(sessionId)));
       //console.log("Cookie Set For: " + email);
       
       return sessionId;

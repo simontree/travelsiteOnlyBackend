@@ -64,7 +64,7 @@ const checkLogin = async (
   let email:string|null;
   if(session!=null){
      email = await client.get(session.toString());
-     console.log(email);
+     //console.log(email);
   } else email = null;
   
   if (!email) {
@@ -92,16 +92,23 @@ app.post("/trips", (req, res) => {
 });
 async function getUserID(){
   const session = await client.get("cookie");
-  const userID = await client.get(session);
-  console.log("userID: " + userID);
+  if(session){
+    const userID = await client.get(session);
+    //console.log("user Session: " + session);
+    return userID;
+  }
+  return undefined;
 }
 
 app.get("/trips", checkLogin, (req, res) => {
-  
-  // const email = req.userEmail;
-  tripService
-    .getTripsOfOneUser(userID.toString())
+  const userID = getUserID();
+  getUserID().then((result:string|null|undefined) => {
+    console.log(result!);
+    tripService
+    .getTripsOfOneUser(result!)
     .then((savedTrips) => res.json(savedTrips));
+  });
+  // const email = req.userEmail;
 });
 
 app.delete("/trips/:tripId", (req, res) => {
