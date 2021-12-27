@@ -166,8 +166,7 @@ app.post("/login", async (req, res) => {
   //   secure: process.env.NODE_ENV === "development",
   // });
   res.status(200);
-  //TODO Add expiration to cookie
-  client.set("cookie", sessionId);
+  client.set("cookie", sessionId, { EX: 600 });
   return res.json({ status: "200", sessionID: sessionId });
 });
 
