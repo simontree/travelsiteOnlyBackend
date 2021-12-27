@@ -5,7 +5,10 @@ import Knex from "knex";
 import { createClient } from "redis";
 import crypto from "crypto";
 
-const client = createClient();
+const client = createClient({
+  url: process.env.REDIS_URL,
+});
+
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
