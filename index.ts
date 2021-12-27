@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-
+import cookieParser from "cookie-parser";
 import TripService from "./api/TripService";
 import AuthService from "./api/AuthService";
 import * as OpenApiValidator from "express-openapi-validator";
@@ -7,6 +7,7 @@ import { HttpError } from "express-openapi-validator/dist/framework/types";
 
 import { knex as knexDriver } from "knex";
 import cors from "cors";
+
 import config from "./knexfile";
 
 import { createClient } from "redis";
@@ -38,6 +39,7 @@ app.use(
 app.use(cors());
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   OpenApiValidator.middleware({
@@ -46,6 +48,36 @@ app.use(
     validateResponses: false, // false by default
   })
 );
+
+const checkLogin = async (
+  req: Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const session = await client.get("cookie");
+  /*then(() => console.log("session cookie: " + session.toString()));*/
+  // const session = req.cookies.session;
+  if (!session) {
+    res.status(401);
+    return res.json({
+      message: "You need to be logged in to see this page. Err1",
+    });
+  }
+  let email: string | null;
+  if (session != null) {
+    email = await client.get(session.toString());
+  } else email = null;
+
+  if (!email) {
+    res.status(401);
+    return res.json({
+      message: "You need to be logged in to see this page. Err2",
+    });
+  }
+  req.userEmail = email;
+
+  next();
+};
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   // format error
@@ -57,19 +89,32 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 ///////////////////////////////////////////// TRIPS //////////////////////////////
 
-app.post("/trips", (req, res) => {
-  //client.set("a","4");
+app.post("/trips", checkLogin, (req, res) => {
   const payload = req.body;
-  tripService.add(payload).then((newEntry) => res.json(newEntry));
+  getUserID().then(async (result: string | null | undefined) => {
+    const user = result!;
+    tripService.add(payload, user).then((newEntry) => res.json(newEntry));
+  });
 });
 
-app.get("/trips", (req, res) => {
-  //console.log(client.get("a"));
-  tripService.getAll().then((savedTrips) => res.json(savedTrips));
+async function getUserID() {
+  const session = await client.get("cookie");
+  if (session) {
+    const userID = await client.get(session);
+    return userID;
+  }
+  return undefined;
+}
+
+app.get("/trips", checkLogin, (req, res) => {
+  getUserID().then((result: string | null | undefined) => {
+    tripService
+      .getTripsOfOneUser(result!)
+      .then((savedTrips) => res.json(savedTrips));
+  });
 });
 
 app.delete("/trips/:tripId", (req, res) => {
-  //client.del("a");
   const tripId = req.params.tripId;
   tripService.delete(tripId).then(() => {
     res.status(204);
@@ -77,7 +122,7 @@ app.delete("/trips/:tripId", (req, res) => {
   });
 });
 
-app.put("/trips/:tripId", (req, res) => {
+app.patch("/trips/:tripId", (req, res) => {
   const tripId = req.params.tripId;
   const changes = req.body;
 
@@ -94,56 +139,69 @@ app.post("/user", (req, res) => {
   authService.create(payload).then((newEntry) => res.json(newEntry));
 });
 
-app.post("/login", async (req, res) => {
-  const payload = req.body;
-  const sessionId = await authService.login(payload.email, payload.password);
-  //console.log(sessionId);
-  if (!sessionId) {
-    res.status(401);
-    return res.json({ message: "Bad email or password" });
-  }
-  /*res.cookie("session", sessionId, {
-    maxAge: 60 * 60 * 1000,
-    httpOnly: true,
-    sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
-  });*/
-  res.json({ status: "200 OK" });
+app.get("/user", (req, res) => {
+  authService.getUsers().then((savedUsers) => res.json(savedUsers));
 });
 
-app.post("/trips/:userIDtrips", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
-  const payload = req.body;
-  tripService.add(payload).then((newEntry) => res.json(newEntry));
-});
-
-app.get("/trips/:userIDtrips", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
-  tripService.getAll().then((savedTrips) => res.json(savedTrips));
-});
-
-app.delete("/trips/:userIDtrips/:tripId", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
-  const tripId = req.params.tripId;
-  tripService.delete(tripId).then(() => {
+app.delete("/user/:email", (req, res) => {
+  const email = req.params.email;
+  authService.delete(email).then(() => {
     res.status(204);
     res.send();
   });
 });
 
-app.put("/trips/:userIDtrips/:tripId", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
-  const tripId = req.params.tripId;
-  const changes = req.body;
-
-  tripService.update(tripId, changes).then(() => {
-    res.status(200);
-    res.send();
-  });
+app.post("/login", async (req, res) => {
+  const payload = req.body;
+  const sessionId = await authService.login(payload.email, payload.password);
+  console.log("sessionID: " + sessionId);
+  if (!sessionId) {
+    res.status(401);
+    return res.json({ message: "Bad email or password" });
+  }
+  // res.cookie("session", sessionId, {
+  //   maxAge: 60 * 60 * 1000,
+  //   httpOnly: true,
+  //   sameSite: "none",
+  //   secure: process.env.NODE_ENV === "development",
+  // });
+  res.status(200);
+  client.set("cookie", sessionId, { EX: 600 });
+  return res.json({ status: "200", sessionID: sessionId });
 });
+
+app.post("/logout", async (req, res) => {
+  client.set("cookie", "0");
+  console.log("logout");
+  res.status(200);
+  return res.json({ message: "Logout successful" });
+});
+
+//wahrscheinlich überflüssig durch app.delete("/trips/:tripId"...) und app.patch("/trips/:tripId"...)
+// app.post("/trips/:userID", (req, res) => {
+//   // const userID = req.params.userID;
+//   const payload = req.body;
+//   tripService.add(payload).then((newEntry) => res.json(newEntry));
+// });
+
+// app.get("/trips/:userID", (req, res) => {
+//   // const userID = req.params.userID;
+//   tripService.getAll().then((savedTrips) => res.json(savedTrips));
+// });
 
 ///////////////////////////////////////////// END USERS //////////////////////////
 
+////////////////////////////////////////// FOR DEBUG /////////////////////////////
+
+app.get("/get", (req, res) => {
+  /*return res.json({
+    chicken: "hi"
+  })*/
+  authService.getUsers().then((dbUsers) => res.json(dbUsers));
+});
+
+//////////////////////////////////////////// END DEBUG ///////////////////////////
+
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Test app listening at http://localhost:${port}`);
 });

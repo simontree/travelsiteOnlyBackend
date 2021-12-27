@@ -9,6 +9,7 @@ const trip = [
     start: "2022-10-10",
     end: "2022-10-21",
     country: "Hawaii",
+    user_id: "huehne@htw-berlin.de",
   },
   {
     trip_id: "68ba8278-5ea9-11ec-bf63-0242ac130002",
@@ -16,6 +17,7 @@ const trip = [
     start: "2022-11-12",
     end: "2022-11-26",
     country: "Ibiza",
+    user_id: "sebastian@giggle.com",
   },
 ];
 

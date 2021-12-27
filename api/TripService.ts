@@ -1,5 +1,4 @@
 import * as crypto from "crypto";
-// const db = require("../db/db-config"); //import db-config und connection zu knex und pg - old js syntax
 import { Knex } from "knex";
 
 interface Trip {
@@ -7,6 +6,7 @@ interface Trip {
   start: Date;
   end: Date;
   country: string;
+  user_id: string;
 }
 
 interface SavedTrips extends Trip {
@@ -20,9 +20,10 @@ class TripService {
   constructor(knex: Knex) {
     this.knex = knex;
   }
-  async add(trip: Trip): Promise<SavedTrips> {
+  async add(trip: Trip, email: string): Promise<SavedTrips> {
     const newTrip: SavedTrips = {
       ...trip,
+      user_id: email,
       trip_id: crypto.randomUUID(),
     };
     await this.knex("trip").insert(newTrip);
@@ -32,6 +33,10 @@ class TripService {
 
   async getAll(): Promise<SavedTrips[]> {
     return this.knex("trip");
+  }
+
+  async getTripsOfOneUser(email: string): Promise<SavedTrips[]> {
+    return this.knex("trip").where({ user_id: email });
   }
 
   async delete(uuid: string): Promise<void> {

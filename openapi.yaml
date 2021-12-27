@@ -74,7 +74,7 @@ paths:
         "404":
           description: Trip not found
           content: {}
-    put:
+    patch:
       tags:
         - trips
       summary: update a trip by ID
@@ -103,20 +103,7 @@ paths:
           description: Trip not found
           content: {}
 
-  /login:
-    post:
-      tags:
-        - login
-      summary: Log in and get cookie for authentication
-      responses:
-        "200":
-          description: Successfull request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Login"
-
-  /trips/{userIDtrips}:
+  /trips/{userID}:
     post:
       tags:
         - trips
@@ -139,6 +126,16 @@ paths:
       tags:
         - trips
       summary: Get all trips from specific user
+      parameters:
+        - name: userID
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: string
+            format: email
+            items:
+              $ref: "#/components/schemas/Login"
       responses:
         "200":
           description: Successfull request
@@ -148,6 +145,64 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/SavedTrip"
+
+  /user:
+    get:
+      tags:
+        - user
+      summary: get all users
+      responses:
+        "200":
+          description: Successfull request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Login"
+    post:
+      tags:
+        - user
+      summary: create new user and insert into database
+      responses:
+        "200":
+          description: Successfull request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Login"
+  /user/{email}:
+    delete:
+      tags:
+        - trips
+      summary: Delete a user by email
+      parameters:
+        - name: email
+          in: path
+          description: email of user to delete
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          description: Bad request
+          content: {}
+        "404":
+          description: Trip not found
+          content: {}
+  /login:
+    post:
+      tags:
+        - login
+      summary: Log in and get cookie for authentication
+      responses:
+        "200":
+          description: Successfull request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Login"
 
 components:
   schemas:

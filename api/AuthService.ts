@@ -1,4 +1,5 @@
-import bcrypt from "bcrypt";
+import config from "../knexfile";
+import bcrypt, { compare } from "bcrypt";
 import Knex from "knex";
 
 import { createClient } from "redis";
@@ -12,7 +13,7 @@ client.on("connect", () => console.log("Successfully connected to redis"));
   await client.connect();
 })();
 
-const knex = Knex;
+const knex = Knex(config);
 
 interface User {
   email: string;
@@ -38,6 +39,7 @@ class AuthService {
     if (!dbUser) {
       return false;
     }
+    // console.log("check pw: " + password + ", " + dbUser.password);
     return bcrypt.compare(password, dbUser.password);
   }
 
@@ -46,9 +48,14 @@ class AuthService {
     password: string
   ): Promise<string | undefined> {
     const correctPassword = await this.checkPassword(email, password);
+    console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      await client.set(sessionId, email, { EX: 60 });
+      await client
+        .set(sessionId, email, { EX: 600 })
+        .then(async () =>
+          console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
+        );
       return sessionId;
     }
     return undefined;
@@ -58,6 +65,11 @@ class AuthService {
     sessionId: string
   ): Promise<string | null> {
     return client.get(sessionId);
+  }
+
+  async getUsers(): Promise<User[]> {
+    const users = await knex("user");
+    return users;
   }
 }
 
