@@ -102,7 +102,51 @@ paths:
         "404":
           description: Trip not found
           content: {}
-
+  /user:
+    get:
+      tags:
+        - user
+      summary: get all users
+      responses:
+        "200":
+          description: Successfull request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Login"
+    post:
+      tags:
+        - user
+      summary: create new user and insert into database
+      responses:
+        "200":
+          description: Successfull request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Login"
+  /user/{email}:
+    delete:
+      tags:
+        - trips
+      summary: Delete a user by email
+      parameters:
+        - name: email
+          in: path
+          description: email of user to delete
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          description: Bad request
+          content: {}
+        "404":
+          description: Trip not found
+          content: {}
   /login:
     post:
       tags:

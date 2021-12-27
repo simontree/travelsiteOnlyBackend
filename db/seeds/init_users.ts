@@ -3,11 +3,11 @@ import { Knex } from "knex";
 const user = [
   {
     email: "huehne@htw-berlin.de",
-    password: "hunter2",
+    password: "$2y$10$O66J/G59rzFAgaPUeYCSZ.1LxHnGFYcnL.Cv./KUAm4YDwTKxIYOi",
   },
   {
     email: "superuser@yohoo.de",
-    password: "superEasy",
+    password: "$2y$10$AgTFjyWXmkdSVW.fBh8i4OxSKP/LCj6pdKJBZg2uNbjuyDNoKmaLG",
   },
 ];
 

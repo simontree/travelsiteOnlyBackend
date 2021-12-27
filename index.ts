@@ -95,6 +95,18 @@ app.post("/user", (req, res) => {
   authService.create(payload).then((newEntry) => res.json(newEntry));
 });
 
+app.get("/user", (req, res) => {
+  authService.getUsers().then((savedUsers) => res.json(savedUsers));
+});
+
+app.delete("/user/:email", (req, res) => {
+  const email = req.params.email;
+  authService.delete(email).then(() => {
+    res.status(204);
+    res.send();
+  });
+});
+
 app.post("/login", async (req, res) => {
   const payload = req.body;
   console.log(payload);
@@ -113,19 +125,19 @@ app.post("/login", async (req, res) => {
   return res.json({ status: "200", sessionID: sessionId });
 });
 
-app.post("/trips/:userIDtrips", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
+app.post("/trips/:userID", (req, res) => {
+  // const userID = req.params.userID;
   const payload = req.body;
   tripService.add(payload).then((newEntry) => res.json(newEntry));
 });
 
-app.get("/trips/:userIDtrips", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
+app.get("/trips/:userID", (req, res) => {
+  // const userID = req.params.userID;
   tripService.getAll().then((savedTrips) => res.json(savedTrips));
 });
 
-app.delete("/trips/:userIDtrips/:tripId", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
+app.delete("/trips/:userID/:tripId", (req, res) => {
+  // const userID = req.params.userID;
   const tripId = req.params.tripId;
   tripService.delete(tripId).then(() => {
     res.status(204);
@@ -133,8 +145,8 @@ app.delete("/trips/:userIDtrips/:tripId", (req, res) => {
   });
 });
 
-app.put("/trips/:userIDtrips/:tripId", (req, res) => {
-  // const userIDtrips = req.params.userIDtrips;
+app.put("/trips/:userID/:tripId", (req, res) => {
+  // const userID = req.params.userID;
   const tripId = req.params.tripId;
   const changes = req.body;
 
@@ -148,13 +160,12 @@ app.put("/trips/:userIDtrips/:tripId", (req, res) => {
 
 ////////////////////////////////////////// FOR DEBUG /////////////////////////////
 
-app.get("/get", (req, res ) =>{
+app.get("/get", (req, res) => {
   /*return res.json({
     chicken: "hi"
   })*/
   authService.getUsers().then((dbUsers) => res.json(dbUsers));
 });
-
 
 //////////////////////////////////////////// END DEBUG ///////////////////////////
 

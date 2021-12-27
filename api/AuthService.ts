@@ -1,5 +1,5 @@
 import bcrypt, { compare } from "bcrypt";
-import {Knex} from "knex";
+import { Knex } from "knex";
 
 import { createClient } from "redis";
 import crypto from "crypto";
@@ -18,7 +18,6 @@ interface User {
 }
 
 class AuthService {
-
   private knex: Knex;
 
   constructor(knex: Knex) {
@@ -39,13 +38,16 @@ class AuthService {
   }
 
   async checkPassword(email: string, password: string): Promise<boolean> {
-    const dbUser = await this.knex('email').from('user').where({ email: email }).first();
+    const dbUser = await this.knex("email")
+      .from("user")
+      .where({ email: email })
+      .first();
     if (!dbUser) {
       return false;
     }
     //console.log(password + " " + dbUser.password);
-    //return bcrypt.compare(password, dbUser.password);
-    return dbUser.password === password;
+    return bcrypt.compare(password, dbUser.password);
+    // return dbUser.password === password;
   }
 
   public async login(
@@ -67,7 +69,7 @@ class AuthService {
     return client.get(sessionId);
   }
 
-  async getUsers(): Promise<User[]>{
+  async getUsers(): Promise<User[]> {
     const users = await this.knex("user");
     return users;
   }
