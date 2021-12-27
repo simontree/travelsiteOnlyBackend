@@ -17,7 +17,7 @@ const trip = [
     start: "2022-11-12",
     end: "2022-11-26",
     country: "Ibiza",
-    user_id: "Sebastian@giggle.com",
+    user_id: "sebastian@giggle.com",
   },
 ];
 

@@ -7,6 +7,7 @@ interface Trip {
   start: Date;
   end: Date;
   country: string;
+  user_id: string;
 }
 
 interface SavedTrips extends Trip {
@@ -20,9 +21,10 @@ class TripService {
   constructor(knex: Knex) {
     this.knex = knex;
   }
-  async add(trip: Trip): Promise<SavedTrips> {
+  async add(trip: Trip, email: string): Promise<SavedTrips> {
     const newTrip: SavedTrips = {
       ...trip,
+      user_id: email,
       trip_id: crypto.randomUUID(),
     };
     await this.knex("trip").insert(newTrip);
@@ -35,8 +37,8 @@ class TripService {
   }
 
   async getTripsOfOneUser(email: string): Promise<SavedTrips[]> {
-    console.log(email);
-    return this.knex("trip").where({user_id:email});
+    // console.log(email);
+    return this.knex("trip").where({ user_id: email });
   }
 
   async delete(uuid: string): Promise<void> {

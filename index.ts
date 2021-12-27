@@ -63,10 +63,9 @@ const checkLogin = async (
       message: "You need to be logged in to see this page. Err1",
     });
   }
-  let email:string|null;
-  if(session!=null){
-     email = await client.get(session.toString());
-     //console.log(email);
+  let email: string | null;
+  if (session != null) {
+    email = await client.get(session.toString());
   } else email = null;
 
   if (!email) {
@@ -90,34 +89,32 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 ///////////////////////////////////////////// TRIPS //////////////////////////////
 
-app.post("/trips", (req, res) => {
+app.post("/trips", checkLogin, (req, res) => {
   const payload = req.body;
-  tripService.add(payload).then((newEntry) => res.json(newEntry));
+  getUserID().then(async (result: string | null | undefined) => {
+    const user = result!;
+    tripService.add(payload, user).then((newEntry) => res.json(newEntry));
+  });
 });
 
 async function getUserID() {
   const session = await client.get("cookie");
-  if(session){
+  if (session) {
     const userID = await client.get(session);
-    //console.log("user Session: " + session);
     return userID;
   }
   return undefined;
 }
 
 app.get("/trips", checkLogin, (req, res) => {
-  const userID = getUserID();
-  getUserID().then((result:string|null|undefined) => {
-    console.log(result!);
+  getUserID().then((result: string | null | undefined) => {
     tripService
-    .getTripsOfOneUser(result!)
-    .then((savedTrips) => res.json(savedTrips));
+      .getTripsOfOneUser(result!)
+      .then((savedTrips) => res.json(savedTrips));
   });
-  // const email = req.userEmail;
 });
 
 app.delete("/trips/:tripId", (req, res) => {
-  //client.del("a");
   const tripId = req.params.tripId;
   tripService.delete(tripId).then(() => {
     res.status(204);
@@ -156,7 +153,6 @@ app.delete("/user/:email", (req, res) => {
 
 app.post("/login", async (req, res) => {
   const payload = req.body;
-  //console.log(payload);
   const sessionId = await authService.login(payload.email, payload.password);
   console.log("sessionID: " + sessionId);
   if (!sessionId) {
@@ -175,12 +171,12 @@ app.post("/login", async (req, res) => {
   return res.json({ status: "200", sessionID: sessionId });
 });
 
-app.post("/logout", async (req,res) =>{
+app.post("/logout", async (req, res) => {
   client.set("cookie", "0");
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });
-})
+});
 
 //wahrscheinlich überflüssig durch app.delete("/trips/:tripId"...) und app.patch("/trips/:tripId"...)
 // app.post("/trips/:userID", (req, res) => {
