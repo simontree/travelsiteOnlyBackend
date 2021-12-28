@@ -10,6 +10,7 @@ import { promisify } from "util";
 const client = createClient({
   url: process.env.REDIS_URL,
 });
+//const client = createClient();
 
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));

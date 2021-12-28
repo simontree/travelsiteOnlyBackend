@@ -25,6 +25,7 @@ const authService = new AuthService();
 const client = createClient({
   url: process.env.REDIS_URL,
 });
+//const client = createClient();
 
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
@@ -75,7 +76,7 @@ const checkLogin = async (
   let email: string | null;
   if (session != null) {
     // email = await client.get(session.toString());
-    email = await setExAsync(session.toString(), 60 * 60, email!);
+    email = await getAsync(session);
   } else email = null;
 
   if (req.params.tripID) {
