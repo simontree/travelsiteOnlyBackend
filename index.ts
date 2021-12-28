@@ -22,8 +22,12 @@ const tripService = new TripService(knex);
 
 const authService = new AuthService();
 
+const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
+
 const client = createClient({
   url: process.env.REDIS_URL,
+  no_ready_check: true,
+  auth_pass: redisPass,
 });
 //const client = createClient();
 
