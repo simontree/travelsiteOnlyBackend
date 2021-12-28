@@ -70,7 +70,6 @@ class AuthService {
       //   );
       //STUCK HERE; PROBLEM WITH REDIS
       await setExAsync(sessionId, 60 * 60, email);
-      console.log(sessionId + " After Logging to Redis");
       return sessionId;
     }
     return undefined;
