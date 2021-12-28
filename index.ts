@@ -61,7 +61,8 @@ const checkLogin = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const session = await client.get("cookie");
+  // const session = await client.get("cookie");
+  const session = await getAsync("cookie");
 
   // const session = req.cookies.session;
   if (!session) {
@@ -117,7 +118,8 @@ app.post("/trips", checkLogin, (req, res) => {
 });
 
 async function getUserID() {
-  const session = await client.get("cookie");
+  // const session = await client.get("cookie");
+  const session = await getAsync("cookie");
   if (session) {
     // const userID = await client.get(session);
     const userID = await getAsync(session.toString());
@@ -193,7 +195,8 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/logout", async (req, res) => {
-  client.set("cookie", "0");
+  // client.set("cookie", "0");
+  await setExAsync("cookie", 60 * 60, "0");
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });
