@@ -5,6 +5,8 @@ import Knex from "knex";
 import { createClient } from "redis";
 import crypto from "crypto";
 
+import { promisify } from "util";
+
 const client = createClient({
   url: process.env.REDIS_URL,
 });
@@ -12,9 +14,12 @@ const client = createClient({
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
-(async () => {
-  await client.connect();
-})();
+// (async () => {
+//   await client.connect();
+// })();
+
+const getAsync = promisify(client.get).bind(client);
+const setExAsync = promisify(client.setEx).bind(client);
 
 const knex = Knex(config);
 
@@ -54,11 +59,12 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      await client
-        .set(sessionId, email, { EX: 600 })
-        .then(async () =>
-          console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
-        );
+      // await client
+      //   .set(sessionId, email, { EX: 600 })
+      //   .then(async () =>
+      //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
+      //   );
+      await setExAsync(sessionId, 60 * 60, email);
       return sessionId;
     }
     return undefined;
@@ -73,7 +79,8 @@ class AuthService {
   public async getUserEmailForSession(
     sessionId: string
   ): Promise<string | null> {
-    return client.get(sessionId);
+    // return client.get(sessionId);
+    return getAsync(sessionId);
   }
 
   async getUsers(): Promise<User[]> {
