@@ -60,6 +60,7 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
+      console.log(sessionId);
       // await client
       //   .set(sessionId, email, { EX: 600 })
       //   .then(async () =>
