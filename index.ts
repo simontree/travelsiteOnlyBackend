@@ -71,7 +71,8 @@ const checkLogin = async (
 
   let email: string | null;
   if (session != null) {
-    email = await client.get(session.toString());
+    // email = await client.get(session.toString());
+    email = await setExAsync(session.toString(), 60 * 60, email!);
   } else email = null;
 
   if (req.params.tripID) {
@@ -116,7 +117,8 @@ app.post("/trips", checkLogin, (req, res) => {
 async function getUserID() {
   const session = await client.get("cookie");
   if (session) {
-    const userID = await client.get(session);
+    // const userID = await client.get(session);
+    const userID = await getAsync(session.toString());
     return userID;
   }
   return undefined;
@@ -183,7 +185,8 @@ app.post("/login", async (req, res) => {
   //   secure: process.env.NODE_ENV === "development",
   // });
   res.status(200);
-  client.set("cookie", sessionId, { EX: 600 });
+  // client.set("cookie", sessionId, { EX: 600 });
+  await setExAsync("cookie", 60 * 60, sessionId);
   return res.json({ status: "200", sessionID: sessionId });
 });
 
