@@ -22,7 +22,9 @@ const tripService = new TripService(knex);
 
 const authService = new AuthService();
 
-const client = createClient();
+const client = createClient({
+  url: process.env.REDIS_URL,
+});
 
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
