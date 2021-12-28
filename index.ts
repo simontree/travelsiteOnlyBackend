@@ -12,6 +12,8 @@ import config from "./knexfile";
 
 import { createClient } from "redis";
 
+import { promisify } from "util";
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -25,9 +27,12 @@ const client = createClient();
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
-(async () => {
-  await client.connect();
-})();
+// (async () => {
+//   await client.connect();
+// })();
+
+const getAsync = promisify(client.get).bind(client);
+const setExAsync = promisify(client.setex).bind(client);
 
 app.use(
   cors({
