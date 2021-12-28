@@ -60,13 +60,13 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      console.log(sessionId);
       // await client
       //   .set(sessionId, email, { EX: 600 })
       //   .then(async () =>
       //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
       //   );
       await setExAsync(sessionId, 60 * 60, email);
+      console.log(sessionId + " After Logging to Redis");
       return sessionId;
     }
     return undefined;

@@ -191,6 +191,7 @@ app.post("/login", async (req, res) => {
   // });
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
+  console.log("Got to before logging sessionID to Redis");
   await setExAsync("cookie", 60 * 60, sessionId);
   console.log("Got to before the response is sent");
   return res.json({ status: "200", sessionID: sessionId });
