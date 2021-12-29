@@ -22,9 +22,14 @@ const tripService = new TripService(knex);
 
 const authService = new AuthService();
 
+const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
+
 const client = createClient({
   url: process.env.REDIS_URL,
+  no_ready_check: true,
+  auth_pass: redisPass,
 });
+//const client = createClient();
 
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
@@ -75,7 +80,7 @@ const checkLogin = async (
   let email: string | null;
   if (session != null) {
     // email = await client.get(session.toString());
-    email = await setExAsync(session.toString(), 60 * 60, email!);
+    email = await getAsync(session);
   } else email = null;
 
   if (req.params.tripID) {
