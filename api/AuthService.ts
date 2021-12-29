@@ -72,7 +72,6 @@ class AuthService {
       await setExAsync(email, 60 * 60, sessionId);
       console.log("sessionId-login(): "+sessionId);
       return sessionId;
-    
     }
     return undefined;
   }
