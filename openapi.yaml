@@ -204,6 +204,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Login"
 
+  /logout:
+    post:
+      tags:
+        - logout
+      summary: Logout
+      responses:
+        "200":
+          description: Successfull request
+
 components:
   schemas:
     Trip:

@@ -5,13 +5,25 @@ import Knex from "knex";
 import { createClient } from "redis";
 import crypto from "crypto";
 
-const client = createClient();
+import { promisify } from "util";
+const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
+
+const client = createClient({
+  url: process.env.REDIS_URL,
+  no_ready_check: true,
+  auth_pass: redisPass,
+});
+//const client = createClient();
+
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
-(async () => {
-  await client.connect();
-})();
+// (async () => {
+//   await client.connect();
+// })();
+
+const getAsync = promisify(client.get).bind(client);
+const setExAsync = promisify(client.setex).bind(client);
 
 const knex = Knex(config);
 
@@ -51,20 +63,29 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      await client
-        .set(sessionId, email, { EX: 600 })
-        .then(async () =>
-          console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
-        );
+      // await client
+      //   .set(sessionId, email, { EX: 600 })
+      //   .then(async () =>
+      //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
+      //   );
+      //STUCK HERE; PROBLEM WITH REDIS
+      await setExAsync(sessionId, 60 * 60, email);
       return sessionId;
     }
     return undefined;
   }
 
+  async getUserOfTrip(uuid: string): Promise<string> {
+    return (
+      await knex("trip").where({ trip_id: uuid }).select("user_id")
+    ).toString();
+  }
+
   public async getUserEmailForSession(
     sessionId: string
   ): Promise<string | null> {
-    return client.get(sessionId);
+    // return client.get(sessionId);
+    return getAsync(sessionId);
   }
 
   async getUsers(): Promise<User[]> {
