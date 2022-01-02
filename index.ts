@@ -199,15 +199,17 @@ app.post("/login", async (req, res) => {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
-   res.cookie(payload.email, sessionId, {
+   /*res.cookie(payload.email, sessionId, {
      maxAge: 60 * 60 * 1000,
      httpOnly: true,
      sameSite: "none",
      secure: process.env.NODE_ENV === "development",
-   });
+   });*/
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
-  //await setExAsync("cookie", 60 * 60, sessionId);
+  await setExAsync(JSON.stringify(payload.email), sessionId);
+  client.expire(JSON.stringify(payload.email), 100);
+  console.log(getAsync(JSON.stringify(payload.email)));
   return res.json({ status: "200", sessionID: sessionId });
 });
 
