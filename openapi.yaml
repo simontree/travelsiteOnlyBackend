@@ -259,6 +259,8 @@ components:
           format: date
         country:
           type: string
+        email:
+          type: string
     SavedTrip:
       allOf:
         - $ref: "#/components/schemas/Trip"
