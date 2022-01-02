@@ -62,6 +62,7 @@ class AuthService {
     const correctPassword = await this.checkPassword(email, password);
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
+      console.log("AS 65");
       const sessionId = crypto.randomUUID();
       // await client
       //   .set(sessionId, email, { EX: 600 })
@@ -70,6 +71,7 @@ class AuthService {
       //   );
       //STUCK HERE; PROBLEM WITH REDIS
       await setExAsync(sessionId, email);
+      console.log("AS 74");
       return sessionId;
     }
     return undefined;

@@ -188,13 +188,15 @@ app.post("/login", async (req, res) => {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
+  console.log("I 191");
    res.cookie("session", sessionId, {
      maxAge: 60 * 1000,
-     httpOnly: true,
+     httpOnly: false,
      sameSite: "none",
      secure: process.env.NODE_ENV === "development",
    });
   res.status(200);
+  console.log("I 199")
   // client.set("cookie", sessionId, { EX: 600 });
   await setExAsync("cookie", sessionId);
   return res.json({ status: "200", sessionID: sessionId });
