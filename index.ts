@@ -39,7 +39,7 @@ client.on("connect", () => console.log("Successfully connected to redis"));
 // })();
 
 const getAsync = promisify(client.get).bind(client);
-const setExAsync = promisify(client.setEx).bind(client);
+const setExAsync = promisify(client.set).bind(client);
 
 app.use(
   cors({
@@ -195,13 +195,13 @@ app.post("/login", async (req, res) => {
    });
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
-  await setExAsync("cookie", 60 * 60, sessionId);
+  await setExAsync("cookie", sessionId);
   return res.json({ status: "200", sessionID: sessionId, message: "hi" });
 });
 
 app.post("/logout", async (req, res) => {
   // client.set("cookie", "0");
-  await setExAsync("cookie", 60 * 60, "0");
+  await setExAsync("cookie","0");
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });

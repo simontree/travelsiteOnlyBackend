@@ -69,7 +69,7 @@ class AuthService {
       //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
       //   );
       //STUCK HERE; PROBLEM WITH REDIS
-      await setExAsync(sessionId, email, {EX:60});
+      await setExAsync(sessionId, email);
       return sessionId;
     }
     return undefined;
