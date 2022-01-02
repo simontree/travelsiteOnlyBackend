@@ -1,5 +1,7 @@
-import dotenv from "dotenv";
-dotenv.config();
+///////////////////////  LOCAL DEV  ////////////////////////
+// import dotenv from "dotenv";
+// dotenv.config();
+////////////////////////////////////////////////////////////
 
 import { Knex } from "knex";
 

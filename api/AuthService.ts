@@ -1,16 +1,31 @@
+import config from "../knexfile";
 import bcrypt, { compare } from "bcrypt";
-import {Knex} from "knex";
+import Knex from "knex";
 
 import { createClient } from "redis";
 import crypto from "crypto";
 
-const client = createClient();
+import { promisify } from "util";
+const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
+
+const client = createClient({
+  url: process.env.REDIS_URL,
+  //no_ready_check: true,
+  //auth_pass: redisPass,
+});
+//const client = createClient();
+
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
-(async () => {
-  await client.connect();
-})();
+// (async () => {
+//   await client.connect();
+// })();
+
+const getAsync = promisify(client.get).bind(client);
+const setExAsync = promisify(client.setEx).bind(client);
+
+const knex = Knex(config);
 
 interface User {
   email: string;
@@ -18,34 +33,26 @@ interface User {
 }
 
 class AuthService {
-
-  private knex: Knex;
-
-  constructor(knex: Knex) {
-    this.knex = knex;
-  }
-
   async create(newUser: User): Promise<void> {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(newUser.password, salt);
-    await this.knex("user").insert({
+    await knex("user").insert({
       ...newUser,
       password: passwordHash,
     });
   }
 
   async delete(email: string): Promise<void> {
-    await this.knex("user").where({ email }).delete();
+    await knex("user").where({ email }).delete();
   }
 
   async checkPassword(email: string, password: string): Promise<boolean> {
-    const dbUser = await this.knex('email').from('user').where({ email: email }).first();
+    const dbUser = await knex<User>("user").where({ email }).first();
     if (!dbUser) {
       return false;
     }
-    //console.log(password + " " + dbUser.password);
-    //return bcrypt.compare(password, dbUser.password);
-    return dbUser.password === password;
+    // console.log("check pw: " + password + ", " + dbUser.password);
+    return bcrypt.compare(password, dbUser.password);
   }
 
   public async login(
@@ -53,22 +60,36 @@ class AuthService {
     password: string
   ): Promise<string | undefined> {
     const correctPassword = await this.checkPassword(email, password);
+    console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      await client.set(sessionId, email, { EX: 60 });
+      // await client
+      //   .set(sessionId, email, { EX: 600 })
+      //   .then(async () =>
+      //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
+      //   );
+      //STUCK HERE; PROBLEM WITH REDIS
+      await setExAsync(sessionId, 60 * 60, email);
       return sessionId;
     }
     return undefined;
   }
 
+  async getUserOfTrip(uuid: string): Promise<string> {
+    return (
+      await knex("trip").where({ trip_id: uuid }).select("user_id")
+    ).toString();
+  }
+
   public async getUserEmailForSession(
     sessionId: string
   ): Promise<string | null> {
-    return client.get(sessionId);
+    // return client.get(sessionId);
+    return getAsync(sessionId);
   }
 
-  async getUsers(): Promise<User[]>{
-    const users = await this.knex("user");
+  async getUsers(): Promise<User[]> {
+    const users = await knex("user");
     return users;
   }
 }
