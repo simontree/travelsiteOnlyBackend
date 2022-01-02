@@ -38,6 +38,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SavedTrip"
+    get:
+      tags:
+        - trips
+      summary: Get all trips
+      requestBody:
+        description: User ID
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserId"
+        required: true
+      responses:
+        "200":
+          description: Successfull request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SavedTrip"
+  /trips/{email}:
     post:
       tags:
         - trips

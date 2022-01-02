@@ -131,7 +131,7 @@ async function getUserID() {
   return undefined;
 }
 
-app.get("/trips"/*, checkLogin*/, (req, res) => {
+app.post("/trips/:email"/*, checkLogin*/, (req, res) => {
   console.log("Trips Retrival Begun: " + JSON.stringify(req.body));
   const payload = req.body;
   /*getUserID(userID).then((result: string | null | undefined) => {
