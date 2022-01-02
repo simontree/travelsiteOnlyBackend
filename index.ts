@@ -116,7 +116,7 @@ app.post("/trips", checkLogin, (req, res) => {
     start: req.body.start,
     end: req.body.end,
     country: JSON.stringify(req.body.country),
-    user_id: JSON.stringify(req.body.country),
+    user_id: JSON.stringify(req.body.email),
   }
   console.log(payload);
   //console.log("Login Checked. Payload: " + JSON.stringify(req.body.email));
