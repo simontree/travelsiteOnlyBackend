@@ -23,7 +23,7 @@ client.on("connect", () => console.log("Successfully connected to redis"));
 // })();
 
 const getAsync = promisify(client.get).bind(client);
-const setExAsync = promisify(client.setEx).bind(client);
+const setExAsync = promisify(client.set).bind(client);
 
 const knex = Knex(config);
 
@@ -69,7 +69,7 @@ class AuthService {
       //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
       //   );
       //STUCK HERE; PROBLEM WITH REDIS
-      await setExAsync(sessionId, 60 * 60, email);
+      await setExAsync(sessionId, email, {EX:60});
       return sessionId;
     }
     return undefined;
