@@ -133,13 +133,13 @@ async function getUserID() {
 
 app.post("/trips/:email"/*, checkLogin*/, (req, res) => {
   console.log("Trips Retrival Begun: " + JSON.stringify(req.body.email));
-  const payload = req.body;
+  //const payload = req.body;
   /*getUserID(userID).then((result: string | null | undefined) => {
     tripService
       .getTripsOfOneUser(result!)
       .then((savedTrips) => res.json(savedTrips));
   });*/
-  const email:string = JSON.parse(payload).email;
+  const email:string = JSON.stringify(req.body.email);
   console.log(email);
   tripService.getTripsOfOneUser(email)
       .then((savedTrips) => res.json(savedTrips));
