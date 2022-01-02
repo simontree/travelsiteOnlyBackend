@@ -6,7 +6,7 @@ interface Trip {
   start: Date;
   end: Date;
   country: string;
-  user_id: string;
+  //user_id: string;
 }
 
 interface SavedTrips extends Trip {

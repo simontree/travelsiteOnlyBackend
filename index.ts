@@ -112,7 +112,8 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 app.post("/trips", checkLogin, (req, res) => {
   const payload = req.body;
-  console.log("Login Checked. Payload: " + JSON.stringify(req.body.email));
+  console.log(req.body);
+  //console.log("Login Checked. Payload: " + JSON.stringify(req.body.email));
   //getUserID().then(async (result: string | null | undefined) => {
     const user = JSON.stringify(req.body.email);
     tripService.add(payload, user).then((newEntry) => res.json(newEntry));
