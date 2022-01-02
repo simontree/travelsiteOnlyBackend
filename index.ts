@@ -34,9 +34,9 @@ const client = createClient({
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
-// (async () => {
-//   await client.connect();
-// })();
+ (async () => {
+   await client.connect();
+ })();
 
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.set).bind(client);
@@ -65,9 +65,7 @@ const checkLogin = async (
   req: Request,
   res: express.Response,
   next: express.NextFunction
-) => {
-  // const session = await client.get("cookie");
-  //const session = await getAsync("cookie");
+  ) => {
 
    const session = req.cookies.session;
   if (!session) {
@@ -124,7 +122,7 @@ app.post("/trips", checkLogin, (req, res) => {
 
 async function getUserID() {
   // const session = await client.get("cookie");
-  const session = await getAsync("cookie");
+  const session = "a";
   if (session) {
     // const userID = await client.get(session);
     const userID = await getAsync(session.toString());
@@ -133,12 +131,17 @@ async function getUserID() {
   return undefined;
 }
 
-app.get("/trips", checkLogin, (req, res) => {
-  getUserID().then((result: string | null | undefined) => {
+app.get("/trips"/*, checkLogin*/, (req, res) => {
+  const payload = req.body;
+  /*getUserID(userID).then((result: string | null | undefined) => {
     tripService
       .getTripsOfOneUser(result!)
       .then((savedTrips) => res.json(savedTrips));
-  });
+  });*/
+  const email:string = JSON.parse(payload).email;
+  console.log(email);
+  tripService.getTripsOfOneUser(email)
+      .then((savedTrips) => res.json(savedTrips));
 });
 
 app.delete("/trips/:tripId", checkLogin, (req, res) => {
