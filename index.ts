@@ -34,9 +34,9 @@ const client = createClient({
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
-// (async () => {
-//   await client.connect();
-// })();
+ (async () => {
+   await client.connect();
+ })();
 
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.set).bind(client);
@@ -67,9 +67,9 @@ const checkLogin = async (
   next: express.NextFunction
 ) => {
   // const session = await client.get("cookie");
- // const session = await getAsync("cookie");
+  const session = await getAsync("cookie");
 
-  const session = req.cookies.session;
+  // const session = req.cookies.session;
   if (!session) {
     res.status(401);
     return res.json({
@@ -122,6 +122,7 @@ app.post("/trips", checkLogin, (req, res) => {
   });
 });
 
+//Gives back email of logged-in user
 async function getUserID() {
   // const session = await client.get("cookie");
   const session = await getAsync("cookie");
@@ -188,20 +189,20 @@ app.post("/login", async (req, res) => {
     return res.json({ message: "Bad email or password" });
   }
    res.cookie("session", sessionId, {
-     maxAge: 60 * 60 * 1000,
-     httpOnly: false,
+     maxAge: 60 * 1000,
+     httpOnly: true,
      sameSite: "none",
      secure: process.env.NODE_ENV === "development",
    });
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
   await setExAsync("cookie", sessionId);
-  return res.json({ status: "200", sessionID: sessionId, message: "hi" });
+  return res.json({ status: "200", sessionID: sessionId });
 });
 
 app.post("/logout", async (req, res) => {
   // client.set("cookie", "0");
-  await setExAsync("cookie","0");
+  await setExAsync("cookie", "0");
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });
