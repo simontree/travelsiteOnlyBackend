@@ -189,7 +189,7 @@ app.post("/login", async (req, res) => {
   }
    res.cookie("session", sessionId, {
      maxAge: 60 * 60 * 1000,
-     httpOnly: false,
+     httpOnly: true,
      sameSite: "none",
      secure: process.env.NODE_ENV === "development",
    });
