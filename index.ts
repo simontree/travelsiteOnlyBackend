@@ -68,7 +68,8 @@ const checkLogin = async (
 ) => {
   // const session = await client.get("cookie");
   //const session = await getAsync("cookie");
-  const session = await req.cookies.testCookie; //req.cookies.emailFromUser, get from Frontend cookie
+
+   const session = req.cookies.session;
   if (!session) {
     res.status(401);
     return res.json({
@@ -186,8 +187,7 @@ app.post("/login", async (req, res) => {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
-   //res.cookie(payload.email, sessionId, {
-     res.cookie("testCookie",sessionId, { //Testing
+   res.cookie(payload.email, sessionId, {
      maxAge: 60 * 60 * 1000,
      httpOnly: true,
      sameSite: "none",
