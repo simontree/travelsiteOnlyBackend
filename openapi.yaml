@@ -283,5 +283,5 @@ components:
     UserId:
       type: object
       properties:
-        email:
+        user_id:
           type: string
