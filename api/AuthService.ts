@@ -18,9 +18,9 @@ const client = createClient({
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
- (async () => {
-   await client.connect();
- })();
+ //(async () => {
+ //  await client.connect();
+ //})();
 
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.set).bind(client);
