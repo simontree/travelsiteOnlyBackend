@@ -111,8 +111,13 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 ///////////////////////////////////////////// TRIPS //////////////////////////////
 
 app.post("/trips", checkLogin, (req, res) => {
-  const payload = req.body;
-  console.log(req.body);
+  const payload = {
+    name: JSON.stringify(req.body.name),
+    start: req.body.start,
+    end: req.body.end,
+    country: JSON.stringify(req.body.country),
+  }
+  console.log(JSON.parse(req.body));
   //console.log("Login Checked. Payload: " + JSON.stringify(req.body.email));
   //getUserID().then(async (result: string | null | undefined) => {
     const user = JSON.stringify(req.body.email);
