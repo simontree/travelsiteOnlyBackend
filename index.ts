@@ -110,14 +110,14 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 ///////////////////////////////////////////// TRIPS //////////////////////////////
 
-app.post("/trips", checkLogin, (req, res) => {
+app.post("/trips"/*, checkLogin*/, (req, res) => {
   const payload = {
     name: JSON.stringify(req.body.name),
     start: req.body.start,
     end: req.body.end,
     country: JSON.stringify(req.body.country),
   }
-  console.log(JSON.parse(req.body));
+  console.log(payload);
   //console.log("Login Checked. Payload: " + JSON.stringify(req.body.email));
   //getUserID().then(async (result: string | null | undefined) => {
     const user = JSON.stringify(req.body.email);
@@ -137,7 +137,7 @@ async function getUserID() {
 }
 
 app.post("/trips/:email"/*, checkLogin*/, (req, res) => {
-  console.log("Trips Retrival Begun: " + JSON.stringify(req.body.email));
+  //console.log("Trips Retrival Begun: " + JSON.stringify(req.body.email));
   //const payload = req.body;
   /*getUserID(userID).then((result: string | null | undefined) => {
     tripService
@@ -145,7 +145,7 @@ app.post("/trips/:email"/*, checkLogin*/, (req, res) => {
       .then((savedTrips) => res.json(savedTrips));
   });*/
   const email:string = JSON.stringify(req.body.email);
-  console.log(email);
+  //console.log(email);
   tripService.getTripsOfOneUser(email)
       .then((savedTrips) => res.json(savedTrips));
 });
