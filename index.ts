@@ -68,9 +68,9 @@ const checkLogin = async (
 ) => {
   // const session = await client.get("cookie");
   //const session = await getAsync("cookie");
-
-   const session = req.cookies.session;
-   console.log(session);
+  console.log("Getting cookie");
+   const session = await req.cookies.session;
+   console.log("Cookie: " + session); 
   if (!session) {
     res.status(401);
     return res.json({
@@ -183,7 +183,7 @@ app.delete("/user/:email", (req, res) => {
 app.post("/login", async (req, res) => {
   const payload = req.body;
   const sessionId = await authService.login(payload.email, payload.password);
-  console.log("sessionID: " + sessionId);
+  //console.log("sessionID: " + sessionId);
   if (!sessionId) {
     res.status(401);
     return res.json({ message: "Bad email or password" });
@@ -194,6 +194,7 @@ app.post("/login", async (req, res) => {
      sameSite: "none",
      secure: process.env.NODE_ENV === "development",
    });
+   console.log(JSON.stringify(res));
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
   //await setExAsync("cookie", 60 * 60, sessionId);
