@@ -68,8 +68,7 @@ const checkLogin = async (
 ) => {
   // const session = await client.get("cookie");
   //const session = await getAsync("cookie");
-
-   const session = req.cookies.session;
+  const session = await req.cookies; //req.cookies.emailFromUser, get from Frontend cookie
   if (!session) {
     res.status(401);
     return res.json({
