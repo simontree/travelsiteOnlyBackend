@@ -132,6 +132,7 @@ async function getUserID() {
 }
 
 app.get("/trips"/*, checkLogin*/, (req, res) => {
+  console.log("Trips Retrival Begun: " + JSON.stringify(req.body));
   const payload = req.body;
   /*getUserID(userID).then((result: string | null | undefined) => {
     tripService
