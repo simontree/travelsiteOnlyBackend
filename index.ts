@@ -66,20 +66,18 @@ const checkLogin = async (
   res: express.Response,
   next: express.NextFunction
   ) => {
-
-   const session = req.cookies.session;
-  if (!session) {
+   const email = JSON.stringify(req.body.email);
+  /*if (!session) {
     res.status(401);
     return res.json({
       message: "You need to be logged in to see this page. Err1",
     });
-  }
+  }*/
 
-  let email: string | null;
-  if (session != null) {
+  /*if (email != null) {
     // email = await client.get(session.toString());
     email = await getAsync(session);
-  } else email = null;
+  } else email = null;*/
 
   if (req.params.tripID) {
     var mailToCheck = await authService.getUserOfTrip(req.params.tripId);
@@ -97,7 +95,7 @@ const checkLogin = async (
     });
   }
 
-  console.log("check session: " + session);
+ // console.log("check session: " + session);
   console.log("check email: " + email);
   next();
 };
