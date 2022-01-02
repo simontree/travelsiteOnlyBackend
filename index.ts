@@ -196,7 +196,7 @@ app.post("/login", async (req, res) => {
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
   await setExAsync("cookie", 60 * 60, sessionId);
-  return res.json({ status: "200", sessionID: sessionId });
+  return res.json({ status: "200", sessionID: sessionId, message: "hi" });
 });
 
 app.post("/logout", async (req, res) => {
