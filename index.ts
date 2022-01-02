@@ -70,6 +70,7 @@ const checkLogin = async (
   //const session = await getAsync("cookie");
 
    const session = req.cookies.session;
+   console.log(session);
   if (!session) {
     res.status(401);
     return res.json({

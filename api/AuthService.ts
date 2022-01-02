@@ -70,7 +70,6 @@ class AuthService {
       //   );
       //STUCK HERE; PROBLEM WITH REDIS
       setExAsync(sessionId, email);
-      console.log("AS 74");
       return sessionId;
     }
     return undefined;
