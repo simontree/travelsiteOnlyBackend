@@ -259,7 +259,7 @@ components:
           format: date
         country:
           type: string
-        email:
+        user_id:
           type: string
     SavedTrip:
       allOf:
