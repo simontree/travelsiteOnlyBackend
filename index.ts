@@ -110,7 +110,7 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 ///////////////////////////////////////////// TRIPS //////////////////////////////
 
-app.post("/trips"/*, checkLogin*/, (req, res) => {
+app.post("/trips", checkLogin, (req, res) => {
   const payload = {
     name: JSON.stringify(req.body.name),
     start: req.body.start,
@@ -136,8 +136,8 @@ async function getUserID() {
   }
   return undefined;
 }
-
-app.post("/trips/:email"/*, checkLogin*/, (req, res) => {
+//Get Trips of one user
+app.post("/trips/:email", checkLogin, (req, res) => {
   //console.log("Trips Retrival Begun: " + JSON.stringify(req.body.email));
   //const payload = req.body;
   /*getUserID(userID).then((result: string | null | undefined) => {
@@ -148,7 +148,9 @@ app.post("/trips/:email"/*, checkLogin*/, (req, res) => {
   const email:string = JSON.stringify(req.body.email);
   //console.log(email);
   tripService.getTripsOfOneUser(email)
-      .then((savedTrips) => res.json(savedTrips));
+      .then((savedTrips) => {
+        console.log(savedTrips);
+        res.json(savedTrips)});
 });
 
 app.delete("/trips/:tripId", checkLogin, (req, res) => {
