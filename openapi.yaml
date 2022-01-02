@@ -43,11 +43,11 @@ paths:
         - trips
       summary: Get all trips
       requestBody:
-        description: Email from user whose trips have to be delivered
+        description: User ID
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Email"
+              $ref: "#/components/schemas/UserId"
         required: true
       responses:
         "200":
@@ -256,9 +256,9 @@ components:
           format: email
         password:
           type: string
-    Email:
+
+    UserId:
       type: object
       properties:
-      email:
-        type: string
-        format: email
+        email:
+          type: string
