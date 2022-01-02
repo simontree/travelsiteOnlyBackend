@@ -67,9 +67,9 @@ const checkLogin = async (
   next: express.NextFunction
 ) => {
   // const session = await client.get("cookie");
-  const session = await getAsync("cookie");
+ // const session = await getAsync("cookie");
 
-  // const session = req.cookies.session;
+  const session = req.cookies.session;
   if (!session) {
     res.status(401);
     return res.json({
@@ -189,7 +189,7 @@ app.post("/login", async (req, res) => {
   }
    res.cookie("session", sessionId, {
      maxAge: 60 * 60 * 1000,
-     httpOnly: true,
+     httpOnly: false,
      sameSite: "none",
      secure: process.env.NODE_ENV === "development",
    });
