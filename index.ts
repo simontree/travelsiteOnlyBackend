@@ -125,10 +125,23 @@ app.post("/trips", checkLogin, (req, res) => {
     user_id: JSON.stringify(req.body.email),
   }
   console.log(payload);
+  const email:string = JSON.stringify(req.body.email);
+  const checkRedis = new Promise((resolve, reject) => {
+    resolve(getAsync(email));
+  });
+  checkRedis.then(((value) => {
+    if(value != null){
+      tripService.add(payload, email).then((newEntry) => res.json(newEntry));
+    }else{
+      res.status(401);
+      return res.json({
+      message: "You need to be logged in to see this page. Err3",
+      });
+    }
+  }))
   //console.log("Login Checked. Payload: " + JSON.stringify(req.body.email));
   //getUserID().then(async (result: string | null | undefined) => {
-    const user = JSON.stringify(req.body.email);
-    tripService.add(payload, user).then((newEntry) => res.json(newEntry));
+    
   //});
 });
 
@@ -227,7 +240,7 @@ app.post("/login", async (req, res) => {
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
   await setExAsync(JSON.stringify(payload.email), sessionId);
-  client.expire(JSON.stringify(payload.email), 100);
+  client.expire(JSON.stringify(payload.email), 15);
   //await getAsync(JSON.stringify(payload.email)).then((sID) => console.log(sID) );
   return res.json({ status: "200", sessionID: sessionId });
 });
