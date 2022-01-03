@@ -61,23 +61,30 @@ app.use(
   })
 );
 
-const checkLogin = async (
+async function checkLogin(user_id:string){
+  let loggedIn = false;
+  client.EXISTS(user_id).then((result) => {loggedIn = result});
+  console.log(user_id + ", logged in: " + loggedIn);
+  return loggedIn;
+};
+
+/*const checkLogin = async (
   req: Request,
   res: express.Response,
   next: express.NextFunction
   ) => {
    const email = JSON.stringify(req.body.email);
-  /*if (!session) {
+  if (!session) {
     res.status(401);
     return res.json({
       message: "You need to be logged in to see this page. Err1",
     });
-  }*/
+  }
 
-  /*if (email != null) {
+  if (email != null) {
     // email = await client.get(session.toString());
     email = await getAsync(session);
-  } else email = null;*/
+  } else email = null;
 
   if (req.params.tripID) {
     var mailToCheck = await authService.getUserOfTrip(req.params.tripId);
@@ -98,7 +105,7 @@ const checkLogin = async (
  // console.log("check session: " + session);
   console.log("check email: " + email);
   next();
-};
+};*/
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   // format error
@@ -209,7 +216,7 @@ app.post("/login", async (req, res) => {
   // client.set("cookie", sessionId, { EX: 600 });
   await setExAsync(JSON.stringify(payload.email), sessionId);
   client.expire(JSON.stringify(payload.email), 100);
-  await getAsync(JSON.stringify(payload.email)).then((sID) => console.log(sID) );
+  //await getAsync(JSON.stringify(payload.email)).then((sID) => console.log(sID) );
   return res.json({ status: "200", sessionID: sessionId });
 });
 
