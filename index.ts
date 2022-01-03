@@ -63,9 +63,7 @@ app.use(
 
 async function checkLogin(user_id:string){
   let loggedIn = false;
-  client.EXISTS(user_id).then((result) => {loggedIn = result});
-  console.log(user_id + ", logged in: " + loggedIn);
-  return loggedIn;
+  await getAsync(user_id).then((sID) => console.log(sID) );
 };
 
 /*const checkLogin = async (
@@ -144,7 +142,7 @@ async function getUserID() {
   return undefined;
 }
 //Get Trips of one user
-app.post("/trips/:email", checkLogin, (req, res) => {
+app.post("/trips/:email", (req, res) => {
   //console.log("Trips Retrival Begun: " + JSON.stringify(req.body.email));
   //const payload = req.body;
   /*getUserID(userID).then((result: string | null | undefined) => {
@@ -153,11 +151,13 @@ app.post("/trips/:email", checkLogin, (req, res) => {
       .then((savedTrips) => res.json(savedTrips));
   });*/
   const email:string = JSON.stringify(req.body.email);
-  //console.log(email);
+  checkLogin(email);
   tripService.getTripsOfOneUser(email)
-      .then((savedTrips) => {
-        console.log(savedTrips);
-        res.json(savedTrips)});
+  .then((savedTrips) => {
+    console.log(savedTrips);
+    res.json(savedTrips)});
+
+  //console.log(email);
 });
 
 app.delete("/trips/:tripId", checkLogin, (req, res) => {
