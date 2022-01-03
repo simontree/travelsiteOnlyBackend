@@ -258,7 +258,7 @@ app.post("/login", async (req, res) => {
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
   await setExAsync(JSON.stringify(payload.email), sessionId);
-  client.expire(JSON.stringify(payload.email), 15);
+  client.expire(JSON.stringify(payload.email), 35);
   //await getAsync(JSON.stringify(payload.email)).then((sID) => console.log(sID) );
   return res.json({ status: "200", sessionID: sessionId });
 });
