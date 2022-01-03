@@ -58,7 +58,7 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      setExAsync(email,sessionId);
+      setExAsync(sessionId, email);
       return sessionId;
     }
     return undefined;

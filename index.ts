@@ -34,6 +34,7 @@ const client = createClient({
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
+
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.set).bind(client);
 
@@ -194,7 +195,7 @@ app.post("/login", async (req, res) => {
   }
 
   res.status(200);
-  await setExAsync( sessionId, JSON.stringify(payload.email));
+  await setExAsync(JSON.stringify(payload.email), sessionId);
   client.expire(JSON.stringify(payload.email), 35);
   return res.json({ status: "200", sessionID: sessionId });
 });
