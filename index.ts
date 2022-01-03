@@ -145,7 +145,7 @@ app.post("/trips", (req, res) => {
   //});
 });
 
-async function getUserID() {
+/*async function getUserID() {
   // const session = await client.get("cookie");
   const session = "a";
   if (session) {
@@ -154,7 +154,7 @@ async function getUserID() {
     return userID;
   }
   return undefined;
-}
+}*/
 //Get Trips of one user
 app.post("/trips/:email", (req, res) => {
   //console.log("Trips Retrival Begun: " + JSON.stringify(req.body.email));
@@ -185,7 +185,7 @@ app.post("/trips/:email", (req, res) => {
   //console.log(email);
 });
 
-app.delete("/trips/:tripId", checkLogin, (req, res) => {
+app.delete("/trips/:tripId",  (req, res) => {
   const tripId = req.params.tripId;
 
   tripService.delete(tripId).then(() => {
@@ -194,14 +194,32 @@ app.delete("/trips/:tripId", checkLogin, (req, res) => {
   });
 });
 
-app.patch("/trips/:tripId", checkLogin, (req, res) => {
+app.patch("/trips/:tripId", (req, res) => {
   const tripId = req.params.tripId;
-  const changes = req.body;
-
-  tripService.update(tripId, changes).then(() => {
-    res.status(200);
-    res.send();
+  const changes = JSON.stringify({
+    name: JSON.stringify(req.body.name),
+    start: req.body.start,
+    end: req.body.end,
+    country: JSON.stringify(req.body.country),
   });
+  console.log(changes);
+  const email:string = JSON.stringify(req.body.email);
+  const checkRedis = new Promise((resolve, reject) => {
+    resolve(getAsync(email));
+  });
+  checkRedis.then(((value) => {
+    if(value != null){
+      tripService.update(tripId, changes).then(() => {
+        res.status(200);
+        res.send();
+      });
+    }else{
+      res.status(401);
+      return res.json({
+      message: "You need to be logged in to see this page. Err3",
+      });
+    }
+  }))
 });
 
 ///////////////////////////////////////////// USERS //////////////////////////////
