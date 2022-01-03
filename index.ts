@@ -216,7 +216,7 @@ app.post("/trips/:tripId", (req, res) => {
     }else{
       res.status(401);
       return res.json({
-      message: "You need to be logged in to see this page. Err3",
+      message: "You need to be logged in to see this page. Err update",
       });
     }
   }))
