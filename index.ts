@@ -162,6 +162,11 @@ app.post("/trips/:email", (req, res) => {
       .then((savedTrips) => {
       console.log(savedTrips);
       res.json(savedTrips)});
+    }else{
+      res.status(401);
+      return res.json({
+      message: "You need to be logged in to see this page. Err3",
+      });
     }
   }))
   //console.log(email);
