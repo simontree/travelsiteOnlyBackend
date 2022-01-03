@@ -202,7 +202,7 @@ app.post("/trips/:tripId", (req, res) => {
     end: req.body.end,
     country: JSON.stringify(req.body.country),
   });
-  console.log(changes);
+  console.log("CHANGES: ------------------" + changes + "---------------------");
   const email:string = JSON.stringify(req.body.email);
   const checkRedis = new Promise((resolve, reject) => {
     resolve(getAsync(email));
