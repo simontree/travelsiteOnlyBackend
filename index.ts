@@ -62,7 +62,7 @@ app.use(
 );
 
 async function checkLogin(user_id:string){
-  let loggedIn = getAsync(user_id);
+  let loggedIn:string = getAsync(user_id);
   return loggedIn;
 };
 
