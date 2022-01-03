@@ -60,14 +60,12 @@ app.use(
     validateResponses: false, // false by default
   })
 );
-
 async function checkLogin(user_id:string){
-  let loggedIn:string|null = 
-  await getAsync(JSON.stringify(user_id)).then((sID) => {
-    loggedIn = sID;
-    return loggedIn;} );
-  
+  getAsync(JSON.stringify(user_id));
+
+
 };
+
 
 /*const checkLogin = async (
   req: Request,
@@ -154,14 +152,18 @@ app.post("/trips/:email", (req, res) => {
       .then((savedTrips) => res.json(savedTrips));
   });*/
   const email:string = JSON.stringify(req.body.email);
-  if(checkLogin(email)!=null){
-    console.log(checkLogin(email))
-  }
-  tripService.getTripsOfOneUser(email)
-  .then((savedTrips) => {
-    console.log(savedTrips);
-    res.json(savedTrips)});
-
+  const checkRedis = new Promise((resolve, reject) => {
+    resolve(getAsync(email));
+  });
+  checkRedis.then(((value) => {
+    if(value != null){
+      console.log(value);
+      tripService.getTripsOfOneUser(email)
+      .then((savedTrips) => {
+      console.log(savedTrips);
+      res.json(savedTrips)});
+    }
+  }))
   //console.log(email);
 });
 
