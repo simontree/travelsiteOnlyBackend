@@ -102,7 +102,7 @@ paths:
         "404":
           description: Trip not found
           content: {}
-    patch:
+    post:
       tags:
         - trips
       summary: update a trip by ID

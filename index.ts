@@ -194,7 +194,7 @@ app.delete("/trips/:tripId",  (req, res) => {
   });
 });
 
-app.patch("/trips/:tripId", (req, res) => {
+app.post("/trips/:tripId", (req, res) => {
   const tripId = req.params.tripId;
   const changes = JSON.stringify({
     name: JSON.stringify(req.body.name),
