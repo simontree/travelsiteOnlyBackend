@@ -34,10 +34,6 @@ const client = createClient({
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
- /*(async () => {
-   await client.connect();
- })();*/
-
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.set).bind(client);
 
@@ -66,45 +62,6 @@ async function checkLogin(user_id:string){
 
 };
 
-
-/*const checkLogin = async (
-  req: Request,
-  res: express.Response,
-  next: express.NextFunction
-  ) => {
-   const email = JSON.stringify(req.body.email);
-  if (!session) {
-    res.status(401);
-    return res.json({
-      message: "You need to be logged in to see this page. Err1",
-    });
-  }
-
-  if (email != null) {
-    // email = await client.get(session.toString());
-    email = await getAsync(session);
-  } else email = null;
-
-  if (req.params.tripID) {
-    var mailToCheck = await authService.getUserOfTrip(req.params.tripId);
-    if (mailToCheck !== email) {
-      return res.json({
-        message: "You need to be logged in to see this page. Err2",
-      });
-    }
-  }
-
-  if (!email) {
-    res.status(401);
-    return res.json({
-      message: "You need to be logged in to see this page. Err3",
-    });
-  }
-
- // console.log("check session: " + session);
-  console.log("check email: " + email);
-  next();
-};*/
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   // format error
@@ -139,22 +96,8 @@ app.post("/trips", (req, res) => {
       });
     }
   }))
-  //console.log("Login Checked. Payload: " + JSON.stringify(req.body.email));
-  //getUserID().then(async (result: string | null | undefined) => {
-    
-  //});
 });
 
-/*async function getUserID() {
-  // const session = await client.get("cookie");
-  const session = "a";
-  if (session) {
-    // const userID = await client.get(session);
-    const userID = await getAsync(session.toString());
-    return userID;
-  }
-  return undefined;
-}*/
 //Get Trips of one user
 app.post("/trips/:email", (req, res) => {
   //console.log("Trips Retrival Begun: " + JSON.stringify(req.body.email));
@@ -249,23 +192,14 @@ app.post("/login", async (req, res) => {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
-   /*res.cookie(payload.email, sessionId, {
-     maxAge: 60 * 60 * 1000,
-     httpOnly: true,
-     sameSite: "none",
-     secure: process.env.NODE_ENV === "development",
-   });*/
+
   res.status(200);
-  // client.set("cookie", sessionId, { EX: 600 });
-  await setExAsync(JSON.stringify(payload.email), sessionId);
+  await setExAsync( sessionId, JSON.stringify(payload.email));
   client.expire(JSON.stringify(payload.email), 35);
-  //await getAsync(JSON.stringify(payload.email)).then((sID) => console.log(sID) );
   return res.json({ status: "200", sessionID: sessionId });
 });
 
-app.post("/logout", async (req, res) => {
-  // client.set("cookie", "0");
-  //await setExAsync("cookie", 60 * 60, "0");
+app.post("/logout", async (req, res) => {;
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });

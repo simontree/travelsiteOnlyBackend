@@ -13,14 +13,10 @@ const client = createClient({
   no_ready_check: true,
   auth_pass: redisPass,
 });
-//const client = createClient();
 
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
- //(async () => {
- //  await client.connect();
- //})();
 
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.set).bind(client);
@@ -51,7 +47,6 @@ class AuthService {
     if (!dbUser) {
       return false;
     }
-    // console.log("check pw: " + password + ", " + dbUser.password);
     return bcrypt.compare(password, dbUser.password);
   }
 
@@ -63,14 +58,7 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      // await client
-      //   .set(sessionId, email, { EX: 600 })
-      //   .then(async () =>
-      //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
-      //   );
-      //STUCK HERE; PROBLEM WITH REDIS
-      setExAsync(sessionId, email);
-      //console.log("AS 74");
+      setExAsync(email,sessionId);
       return sessionId;
     }
     return undefined;
@@ -85,7 +73,6 @@ class AuthService {
   public async getUserEmailForSession(
     sessionId: string
   ): Promise<string | null> {
-    // return client.get(sessionId);
     return getAsync(sessionId);
   }
 
