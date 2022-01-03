@@ -209,7 +209,7 @@ app.post("/login", async (req, res) => {
   // client.set("cookie", sessionId, { EX: 600 });
   await setExAsync(JSON.stringify(payload.email), sessionId);
   client.expire(JSON.stringify(payload.email), 100);
-  console.log(getAsync(JSON.stringify(payload.email)));
+  await getAsync(JSON.stringify(payload.email)).then((sID) => console.log(sID) );
   return res.json({ status: "200", sessionID: sessionId });
 });
 
