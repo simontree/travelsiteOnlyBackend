@@ -62,8 +62,8 @@ app.use(
 );
 
 async function checkLogin(user_id:string){
-  let loggedIn = false;
-  await getAsync(user_id).then((sID) => console.log(sID) );
+  let loggedIn = getAsync(user_id);
+  return loggedIn;
 };
 
 /*const checkLogin = async (
@@ -151,7 +151,9 @@ app.post("/trips/:email", (req, res) => {
       .then((savedTrips) => res.json(savedTrips));
   });*/
   const email:string = JSON.stringify(req.body.email);
-  checkLogin(email);
+  if(checkLogin(email)!=null){
+    console.log(checkLogin(email))
+  }
   tripService.getTripsOfOneUser(email)
   .then((savedTrips) => {
     console.log(savedTrips);
