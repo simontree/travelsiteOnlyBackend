@@ -116,7 +116,7 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 ///////////////////////////////////////////// TRIPS //////////////////////////////
 
-app.post("/trips", checkLogin, (req, res) => {
+app.post("/trips", (req, res) => {
   const payload = {
     name: JSON.stringify(req.body.name),
     start: req.body.start,
