@@ -62,8 +62,11 @@ app.use(
 );
 
 async function checkLogin(user_id:string){
-  let loggedIn:string = getAsync(user_id);
-  return loggedIn;
+  let loggedIn:string|null = 
+  await getAsync(JSON.stringify(user_id)).then((sID) => {
+    loggedIn = sID.toString();
+    return loggedIn;} );
+  
 };
 
 /*const checkLogin = async (
