@@ -39,7 +39,7 @@ client.on("connect", () => console.log("Successfully connected to redis"));
 // })();
 
 const getAsync = promisify(client.get).bind(client);
-const setExAsync = promisify(client.setEx).bind(client);
+const setExAsync = promisify(client.setex).bind(client);
 
 app.use(
   cors({
