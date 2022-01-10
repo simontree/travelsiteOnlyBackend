@@ -22,12 +22,12 @@ const tripService = new TripService(knex);
 
 const authService = new AuthService();
 
-const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
+// const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
 const client = createClient({
   url: process.env.REDIS_URL,
-  no_ready_check: true,
-  auth_pass: redisPass,
+  // no_ready_check: true,
+  // auth_pass: redisPass,
 });
 //const client = createClient();
 
@@ -39,7 +39,7 @@ client.on("connect", () => console.log("Successfully connected to redis"));
 // })();
 
 const getAsync = promisify(client.get).bind(client);
-const setExAsync = promisify(client.setex).bind(client);
+const setExAsync = promisify(client.setEx).bind(client);
 
 app.use(
   cors({
