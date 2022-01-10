@@ -23,7 +23,7 @@ class TripService {
   async add(trip: Trip, email: string): Promise<SavedTrips> {
     const newTrip: SavedTrips = {
       ...trip,
-      //user_id: email,
+      user_id: email,
       trip_id: crypto.randomUUID(),
     };
     await this.knex("trip").insert(newTrip);
