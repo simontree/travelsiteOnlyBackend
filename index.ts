@@ -25,10 +25,11 @@ const authService = new AuthService();
 // const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
 const client = createClient({
-  url: process.env.REDIS_URL,
+  // url: process.env.REDIS_URL,
   // no_ready_check: true,
   // auth_pass: redisPass,
 });
+//const client = createClient();
 
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
@@ -66,12 +67,10 @@ const checkLogin = async (
   next: express.NextFunction
 ) => {
   // const session = await client.get("cookie");
+  const session = await getAsync("cookie");
+  console.log("session: " + session);
 
-  // const session = await getAsync("cookie");
-  console.log("session-cookie: "+req.cookies.session);
-
-  const session = await req.cookies.session;
-  
+  // const session = req.cookies.session;
   if (!session) {
     res.status(401);
     return res.json({
@@ -100,7 +99,7 @@ const checkLogin = async (
       message: "You need to be logged in to see this page. Err3",
     });
   }
-  req.userEmail = email;
+
   console.log("check session: " + session);
   console.log("check email: " + email);
   next();
@@ -118,29 +117,29 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 app.post("/trips", checkLogin, (req, res) => {
   const payload = req.body;
-  // getUserID().then(async (result: string | null | undefined) => {
-    // const user = result!;
-    tripService.add(payload, payload.email).then((newEntry) => res.json(newEntry));
-  // });
+  getUserID().then(async (result: string | null | undefined) => {
+    const user = result!;
+    tripService.add(payload, user).then((newEntry) => res.json(newEntry));
+  });
 });
 
-// async function getUserID() {
-//   // const session = await client.get("cookie");
-//   const session = await getAsync("cookie");
-//   if (session) {
-//     // const userID = await client.get(session);
-//     const userID = await getAsync(session.toString());
-//     return userID;
-//   }
-//   return undefined;
-// }
+async function getUserID() {
+  // const session = await client.get("cookie");
+  const session = await getAsync("cookie");
+  if (session) {
+    // const userID = await client.get(session);
+    const userID = await getAsync(session.toString());
+    return userID;
+  }
+  return undefined;
+}
 
 app.get("/trips", checkLogin, (req, res) => {
-  // getUserID().then((result: string | null | undefined) => {
+  getUserID().then((result: string | null | undefined) => {
     tripService
-      .getTripsOfOneUser(req.body.email)
+      .getTripsOfOneUser(result!)
       .then((savedTrips) => res.json(savedTrips));
-  // });
+  });
 });
 
 app.delete("/trips/:tripId", checkLogin, (req, res) => {
@@ -189,25 +188,21 @@ app.post("/login", async (req, res) => {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
-  res.cookie("session", sessionId, {
-    maxAge: 60 * 60 * 1000,
-    httpOnly: true,
-    sameSite: "none",
-    secure: process.env.NODE_ENV === "development",
-  });
+  // res.cookie("session", sessionId, {
+  //   maxAge: 60 * 60 * 1000,
+  //   httpOnly: true,
+  //   sameSite: "none",
+  //   secure: process.env.NODE_ENV === "development",
+  // });
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
-
-  // await setExAsync("cookie", 60 * 60, sessionId);
-  await setExAsync(payload.email, 60 * 60, sessionId);
+  await setExAsync("cookie", 60 * 60, sessionId);
   return res.json({ status: "200", sessionID: sessionId });
 });
 
 app.post("/logout", async (req, res) => {
-  const payload = req.body;
-  const sessionId = await authService.login(payload.email, payload.password);
   // client.set("cookie", "0");
-  await setExAsync(sessionId!, 60 * 60, "0");
+  await setExAsync("cookie", 60 * 60, "0");
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });
