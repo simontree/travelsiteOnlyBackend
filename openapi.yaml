@@ -42,34 +42,6 @@ paths:
       tags:
         - trips
       summary: Get all trips
-      requestBody:
-        description: User ID
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserId"
-        required: true
-      responses:
-        "200":
-          description: Successfull request
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/SavedTrip"
-  /trips/{email}:
-    post:
-      tags:
-        - trips
-      summary: Get all trips
-      requestBody:
-        description: User ID
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserId"
-        required: true
       responses:
         "200":
           description: Successfull request
@@ -102,7 +74,7 @@ paths:
         "404":
           description: Trip not found
           content: {}
-    post:
+    patch:
       tags:
         - trips
       summary: update a trip by ID
@@ -259,8 +231,6 @@ components:
           format: date
         country:
           type: string
-        user_id:
-          type: string
     SavedTrip:
       allOf:
         - $ref: "#/components/schemas/Trip"
@@ -278,10 +248,4 @@ components:
           type: string
           format: email
         password:
-          type: string
-
-    UserId:
-      type: object
-      properties:
-        user_id:
           type: string
