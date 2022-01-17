@@ -68,12 +68,12 @@ const checkLogin = async (
       message: "You need to be logged in to see this page. Err1",
     });
   }
-  console.log("checkLogin()-req.userEmail: "+req.userEmail);
+  // console.log("checkLogin()-req.userEmail: "+req.userEmail);
   let email: string | null;
   if (session != null) {
-    // email = await client.get(session.toString());
     email = await getAsync(session);
   } else email = null;
+  console.log("checkLogin()-email: "+email);
 
   if (req.params.tripID) {
     var mailToCheck = await authService.getUserOfTrip(req.params.tripId);
@@ -123,17 +123,14 @@ app.post("/trips", checkLogin, (req, res) => {
 async function getUserID(req) {
   const session = await authService.getUserEmailForSession(req.cookies.session);
   if (session) {
-    const userID = await getAsync(session.toString());
-    return userID;
+    return session;
   }
   return undefined;
 }
 
-
-app.get("/trips", checkLogin, (req, res) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
-  console.log("getUserID(req): "+getUserID(req));
-  getUserID(req).then((result: string | null | undefined) => {
+app.get("/trips", checkLogin, async (req, res) => {
+  // res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
+  await getUserID(req).then((result: string | null | undefined) => {
     tripService
       .getTripsOfOneUser(result!)
       .then((savedTrips) => res.json(savedTrips));
@@ -190,10 +187,10 @@ app.post("/login", async (req, res) => {
      maxAge: 60*60*100000,
      httpOnly: true,
      sameSite: "none",
-     secure: false,
+     secure: true,
+     //  secure: process.env.NODE_ENV === "production",
    });
   res.status(200);
-  await setExAsync("cookie",60* 60 * 60, sessionId);
   return res.json({ status: "200", sessionID: sessionId });
 });
 
