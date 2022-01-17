@@ -9,9 +9,9 @@ import { promisify } from "util";
 const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
 const client = createClient({
-  // url: process.env.REDIS_URL,
-  // no_ready_check: true,
-  // auth_pass: redisPass,
+  url: process.env.REDIS_URL,
+  no_ready_check: true,
+  auth_pass: redisPass,
 });
 
 client.on("error", (err) => console.log("Redis Client Error", err));
