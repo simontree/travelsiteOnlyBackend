@@ -27,7 +27,7 @@ const authService = new AuthService();
 const client = createClient({
   url: process.env.REDIS_URL,
   no_ready_check: true,
-  // auth_pass: redisPass,
+  auth_pass: process.env.REDIS_PASSWORD,
 });
 
 client.on("error", (err) => console.log("Redis client error", err));
