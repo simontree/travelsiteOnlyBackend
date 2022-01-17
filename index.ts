@@ -24,12 +24,12 @@ const authService = new AuthService();
 
 const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
-const client = createClient({
+/*const client = createClient({
   url: process.env.REDIS_URL,
   no_ready_check: true,
   auth_pass: redisPass,
-});
-//const client = createClient();
+});*/
+const client = createClient();
 
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
@@ -48,7 +48,7 @@ app.use(
   })
 );
 
-app.use(cors());
+//app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());
@@ -67,9 +67,9 @@ const checkLogin = async (
   next: express.NextFunction
 ) => {
   // const session = await client.get("cookie");
-  const session = await getAsync("cookie");
+  //const session = await getAsync("cookie");
 
-  // const session = req.cookies.session;
+  const session = req.cookies.session;
   if (!session) {
     res.status(401);
     return res.json({
@@ -134,6 +134,7 @@ async function getUserID() {
 }
 
 app.get("/trips", checkLogin, (req, res) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
   getUserID().then((result: string | null | undefined) => {
     tripService
       .getTripsOfOneUser(result!)
@@ -187,15 +188,23 @@ app.post("/login", async (req, res) => {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
-  // res.cookie("session", sessionId, {
-  //   maxAge: 60 * 60 * 1000,
-  //   httpOnly: true,
-  //   sameSite: "none",
-  //   secure: process.env.NODE_ENV === "development",
-  // });
+   /*res.cookie("session", sessionId, {
+     maxAge: 60 * 60 * 100000,
+     httpOnly: true,
+     sameSite: "none",
+     secure: process.env.NODE_ENV === "development",
+     //domain: "http://127.0.0.1:5501/map.html",
+   });*/
+   res.cookie("session", sessionId,{
+     maxAge: 60*60*100000,
+     httpOnly: true,
+     sameSite: "none",
+     secure: false,
+   });
+   res.cookie("A","b");
   res.status(200);
   // client.set("cookie", sessionId, { EX: 600 });
-  await setExAsync("cookie", 60 * 60, sessionId);
+  await setExAsync("cookie",60* 60 * 60, sessionId);
   return res.json({ status: "200", sessionID: sessionId });
 });
 

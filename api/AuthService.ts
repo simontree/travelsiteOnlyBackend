@@ -8,12 +8,12 @@ import crypto from "crypto";
 import { promisify } from "util";
 const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
-const client = createClient({
+/*const client = createClient({
   url: process.env.REDIS_URL,
   no_ready_check: true,
   auth_pass: redisPass,
-});
-//const client = createClient();
+});*/
+const client = createClient();
 
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
@@ -63,12 +63,6 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      // await client
-      //   .set(sessionId, email, { EX: 600 })
-      //   .then(async () =>
-      //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
-      //   );
-      //STUCK HERE; PROBLEM WITH REDIS
       await setExAsync(sessionId, 60 * 60, email);
       return sessionId;
     }
