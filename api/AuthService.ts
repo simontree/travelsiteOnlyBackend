@@ -47,7 +47,6 @@ class AuthService {
     if (!dbUser) {
       return false;
     }
-    // console.log("check pw: " + password + ", " + dbUser.password);
     return bcrypt.compare(password, dbUser.password);
   }
 
@@ -59,13 +58,6 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
-      // await client
-      //   .set(sessionId, email, { EX: 600 })
-      //   .then(async () =>
-      //     console.log("Redis Cookie Set For: " + (await client.get(sessionId)))
-      //   );
-      //STUCK HERE; PROBLEM WITH REDIS
-
       //sessionId = key, email = value
       await setExAsync(sessionId, 60 * 60, email);
       console.log("sessionId-login(): " + sessionId);
