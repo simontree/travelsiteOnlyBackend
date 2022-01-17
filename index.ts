@@ -14,6 +14,8 @@ import { createClient } from "redis";
 
 import { promisify } from "util";
 
+import https from "https";
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -196,10 +198,10 @@ app.post("/login", async (req, res) => {
      //domain: "http://127.0.0.1:5501/map.html",
    });*/
    res.cookie("session", sessionId,{
-     maxAge: 60*60*100000,
+     maxAge: 60*60*10000,
      httpOnly: true,
      sameSite: "none",
-     secure: false,
+     secure: true,
    });
    res.cookie("A","b");
   res.status(200);
