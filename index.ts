@@ -25,9 +25,9 @@ const authService = new AuthService();
 const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
 const client = createClient({
-  // url: process.env.REDIS_URL,
-  // no_ready_check: true,
-  // auth_pass: redisPass,
+  url: "redis-13914.c293.eu-central-1-1.ec2.cloud.redislabs.com:13914",
+  no_ready_check: true,
+  auth_pass: redisPass,
 });
 
 client.on("error", (err) => console.log("Redis client error", err));
