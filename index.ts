@@ -22,21 +22,16 @@ const tripService = new TripService(knex);
 
 const authService = new AuthService();
 
-// const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
+const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
 const client = createClient({
   // url: process.env.REDIS_URL,
   // no_ready_check: true,
   // auth_pass: redisPass,
 });
-//const client = createClient();
 
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
-
-// (async () => {
-//   await client.connect();
-// })();
 
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.setex).bind(client);
@@ -48,10 +43,8 @@ app.use(
   })
 );
 
-app.use(cors());
-
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 
 app.use(
   OpenApiValidator.middleware({
@@ -66,18 +59,16 @@ const checkLogin = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  // const session = await client.get("cookie");
-  const session = await getAsync("cookie");
-  console.log("session: " + session);
+  const session = req.cookies.session;
+  console.log("checkLogin()-session: " + session);
 
-  // const session = req.cookies.session;
   if (!session) {
     res.status(401);
     return res.json({
       message: "You need to be logged in to see this page. Err1",
     });
   }
-
+  console.log("checkLogin()-req.userEmail: "+req.userEmail);
   let email: string | null;
   if (session != null) {
     // email = await client.get(session.toString());
@@ -100,12 +91,17 @@ const checkLogin = async (
     });
   }
 
-  console.log("check session: " + session);
-  console.log("check email: " + email);
+  console.log("checkLogin() session: " + session);
+  console.log("checkLogin() email: " + email);
   next();
 };
 
-app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
+app.use(
+  (err: HttpError, 
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+    ) => {
   // format error
   res.status(err.status || 500).json({
     message: err.message,
@@ -117,25 +113,27 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 
 app.post("/trips", checkLogin, (req, res) => {
   const payload = req.body;
-  getUserID().then(async (result: string | null | undefined) => {
+  getUserID(req).then(async (result: string | null | undefined) => {
     const user = result!;
     tripService.add(payload, user).then((newEntry) => res.json(newEntry));
   });
 });
 
-async function getUserID() {
-  // const session = await client.get("cookie");
-  const session = await getAsync("cookie");
+//UserID = email
+async function getUserID(req) {
+  const session = await authService.getUserEmailForSession(req.cookies.session);
   if (session) {
-    // const userID = await client.get(session);
     const userID = await getAsync(session.toString());
     return userID;
   }
   return undefined;
 }
 
+
 app.get("/trips", checkLogin, (req, res) => {
-  getUserID().then((result: string | null | undefined) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
+  console.log("getUserID(req): "+getUserID(req));
+  getUserID(req).then((result: string | null | undefined) => {
     tripService
       .getTripsOfOneUser(result!)
       .then((savedTrips) => res.json(savedTrips));
@@ -183,26 +181,23 @@ app.delete("/user/:email", (req, res) => {
 app.post("/login", async (req, res) => {
   const payload = req.body;
   const sessionId = await authService.login(payload.email, payload.password);
-  console.log("sessionID: " + sessionId);
+  console.log("post-login-sessionID: " + sessionId);
   if (!sessionId) {
     res.status(401);
     return res.json({ message: "Bad email or password" });
   }
-  // res.cookie("session", sessionId, {
-  //   maxAge: 60 * 60 * 1000,
-  //   httpOnly: true,
-  //   sameSite: "none",
-  //   secure: process.env.NODE_ENV === "development",
-  // });
+   res.cookie("session", sessionId,{
+     maxAge: 60*60*100000,
+     httpOnly: true,
+     sameSite: "none",
+     secure: false,
+   });
   res.status(200);
-  // client.set("cookie", sessionId, { EX: 600 });
-  await setExAsync("cookie", 60 * 60, sessionId);
+  await setExAsync("cookie",60* 60 * 60, sessionId);
   return res.json({ status: "200", sessionID: sessionId });
 });
 
 app.post("/logout", async (req, res) => {
-  // client.set("cookie", "0");
-  await setExAsync("cookie", 60 * 60, "0");
   console.log("logout");
   res.status(200);
   return res.json({ message: "Logout successful" });
