@@ -8,20 +8,25 @@ import crypto from "crypto";
 import { promisify } from "util";
 const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
+<<<<<<< HEAD
 /*const client = createClient({
   url: process.env.REDIS_URL,
   no_ready_check: true,
   auth_pass: redisPass,
 });*/
 const client = createClient();
+=======
+const client = createClient({
+  // url: process.env.REDIS_URL,
+  // no_ready_check: true,
+  // auth_pass: redisPass,
+});
+>>>>>>> master
 
 client.on("error", (err) => console.log("Redis Client Error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
 
-// (async () => {
-//   await client.connect();
-// })();
-
+//Redis v3.1.2 methods
 const getAsync = promisify(client.get).bind(client);
 const setExAsync = promisify(client.setex).bind(client);
 
@@ -51,7 +56,6 @@ class AuthService {
     if (!dbUser) {
       return false;
     }
-    // console.log("check pw: " + password + ", " + dbUser.password);
     return bcrypt.compare(password, dbUser.password);
   }
 
@@ -63,7 +67,12 @@ class AuthService {
     console.log("correct pw?: " + correctPassword);
     if (correctPassword) {
       const sessionId = crypto.randomUUID();
+<<<<<<< HEAD
+=======
+      //sessionId = key, email = value
+>>>>>>> master
       await setExAsync(sessionId, 60 * 60, email);
+      console.log("sessionId-login(): " + sessionId);
       return sessionId;
     }
     return undefined;

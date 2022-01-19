@@ -103,49 +103,6 @@ paths:
           description: Trip not found
           content: {}
 
-  /trips/{userID}:
-    post:
-      tags:
-        - trips
-      summary: Add a new trip to user with userID
-      requestBody:
-        description: Trip object that needs to be added
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Trip"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SavedTrip"
-    get:
-      tags:
-        - trips
-      summary: Get all trips from specific user
-      parameters:
-        - name: userID
-          in: path
-          description: ID of user
-          required: true
-          schema:
-            type: string
-            format: email
-            items:
-              $ref: "#/components/schemas/Login"
-      responses:
-        "200":
-          description: Successfull request
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/SavedTrip"
-
   /user:
     get:
       tags:
