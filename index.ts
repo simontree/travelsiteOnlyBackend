@@ -24,11 +24,13 @@ const authService = new AuthService();
 
 const redisPass = "hlzu8VsbpKUSe9GysuZDJQN73rDhipVy";
 
-const client = createClient({
+// const client = createClient({
   // url: process.env.REDIS_URL,
   // no_ready_check: true,
   // auth_pass: redisPass,
-});
+// });
+
+const client = createClient();
 
 client.on("error", (err) => console.log("Redis client error", err));
 client.on("connect", () => console.log("Successfully connected to redis"));
@@ -128,14 +130,24 @@ async function getUserID(req) {
   return undefined;
 }
 
-app.get("/trips", checkLogin, async (req, res) => {
-  // res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
-  await getUserID(req).then((result: string | null | undefined) => {
-    tripService
-      .getTripsOfOneUser(result!)
-      .then((savedTrips) => res.json(savedTrips));
-  });
-});
+// app.get("/trips", checkLogin, async (req, res) => {
+//   // res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
+//   await getUserID(req).then((result: string | null | undefined) => {
+//     tripService
+//       .getTripsOfOneUser(result!)
+//       .then((savedTrips) => res.json(savedTrips));
+//   });
+// });
+
+//////////////////// for testing only - delete later ///////////////////
+
+app.get("/trips", (req,res) => {
+  tripService
+  .getTripsOfOneUser("huehne@htw-berlin.de")
+  .then((savedTrips) => res.json(savedTrips));
+})
+
+////////////////////////////////////////////////////////////////////////
 
 app.delete("/trips/:tripId", checkLogin, (req, res) => {
   const tripId = req.params.tripId;
