@@ -186,7 +186,7 @@ app.post("/login", async (req, res) => {
     return res.json({ message: "Bad email or password" });
   }
    res.cookie("session", sessionId,{
-     maxAge: 60*60*100000,
+     maxAge: 60*60*1000,
      httpOnly: true,
      sameSite: "none",
      secure: true,
@@ -197,7 +197,10 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/logout", async (req, res) => {
+  let key = req.cookies.session.toString();
   console.log("logout");
+  client.del(key);
+  res.clearCookie('session');
   res.status(200);
   return res.json({ message: "Logout successful" });
 });
