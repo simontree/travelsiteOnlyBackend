@@ -130,24 +130,14 @@ async function getUserID(req) {
   return undefined;
 }
 
-// app.get("/trips", checkLogin, async (req, res) => {
-//   // res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
-//   await getUserID(req).then((result: string | null | undefined) => {
-//     tripService
-//       .getTripsOfOneUser(result!)
-//       .then((savedTrips) => res.json(savedTrips));
-//   });
-// });
-
-//////////////////// for testing only - delete later ///////////////////
-
-app.get("/trips", (req,res) => {
-  tripService
-  .getTripsOfOneUser("huehne@htw-berlin.de")
-  .then((savedTrips) => res.json(savedTrips));
-})
-
-////////////////////////////////////////////////////////////////////////
+app.get("/trips", checkLogin, async (req, res) => {
+  // res.set('Access-Control-Allow-Origin', 'http://localhost:5000');
+  await getUserID(req).then((result: string | null | undefined) => {
+    tripService
+      .getTripsOfOneUser(result!)
+      .then((savedTrips) => res.json(savedTrips));
+  });
+});
 
 app.delete("/trips/:tripId", checkLogin, (req, res) => {
   const tripId = req.params.tripId;
