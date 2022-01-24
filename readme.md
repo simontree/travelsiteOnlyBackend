@@ -3,7 +3,7 @@
 Backend for web-app frontend:
 
 - React: https://github.com/Dohruba/webtech-2React
-- Typescript/VanillaJS: https://github.com/simontree/webtech-2
+- VanillaJS: https://github.com/simontree/webtech-2
 
 ## Setup
 
