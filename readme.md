@@ -1,11 +1,13 @@
-**Express Server zum Verwalten von Reisen von webtech-2**
+# Express Server for webapp to organize travel-journeys
 
-Anleitung:
+## Setup
 
-1. Nach dem clonen alle dependencies installieren mit: npm i
-2. npx gitignore node
-3. ".env"-file erzeugen, falls mit lokaler db gearbeitet wird
+1. Clone repo into your local directory
+2. run "npm i" to install all necessary packages
+3. run "npx gitignore node" to add gitignore file
+4. create ".env"-file locally
 
-lokal dazu installiert:
-- Redis-Cli
-- Postgres
+further required to install locally:
+
+redis-client & server: https://redis.io/download 
+postgress client: https://www.postgresql.org/ 
