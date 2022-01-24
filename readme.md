@@ -1,4 +1,4 @@
-# Express Server for webapp to organize travel-journeys
+# Express Server for webapp to organize travels
 
 Backend for web-app frontend:
 
