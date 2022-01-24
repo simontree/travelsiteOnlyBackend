@@ -1,5 +1,10 @@
 # Express Server for webapp to organize travel-journeys
 
+Backend for web-app frontend:
+
+React: https://github.com/Dohruba/webtech-2React
+Typescript/VanillaJS: https://github.com/simontree/webtech-2
+
 ## Setup
 
 1. Clone repo into your local directory
