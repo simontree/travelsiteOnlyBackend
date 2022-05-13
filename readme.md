@@ -16,3 +16,7 @@ further required to install locally:
 
 - redis-client & server: https://redis.io/download 
 - postgress client: https://www.postgresql.org/ 
+
+to run knex use npx: 
+
+npx knex [options] [command]
